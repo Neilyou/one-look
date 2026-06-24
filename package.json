@@ -1,0 +1,63 @@
+{
+  "name": "one-look",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@fontsource/inter": "^5.0.15",
+    "@mui/icons-material": "^5.14.16",
+    "@mui/joy": "^5.0.0-beta.8",
+    "@mui/lab": "^5.0.0-alpha.145",
+    "@mui/material": "^5.14.16",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "aws-amplify": "^6.0.17",
+    "aws-rum-web": "^1.19.0",
+    "aws-sdk": "^2.1563.0",
+    "dotenv": "^16.3.1",
+    "drei": "^2.2.21",
+    "google-sheets-mapper": "^2.0.0",
+    "google-spreadsheet": "^4.1.1",
+    "googleapis": "^128.0.0",
+    "node-fetch": "^3.3.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router": "^6.22.3",
+    "react-router-dom": "^6.22.3",
+    "react-scripts": "^5.0.1",
+    "react-three-fiber": "^6.0.13",
+    "three": "^0.157.0",
+    "use-google-sheets": "^2.0.0",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4"
+  }
+}
