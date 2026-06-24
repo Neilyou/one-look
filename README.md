@@ -53,9 +53,8 @@ npm start
 
 核心公式：
 
-\[
-\text{Scramble} = (\text{Setup} \cdot \text{Base} \cdot \text{Alg} \cdot \text{AUF})^{-1}
-\]
+
+$$\text{Scramble} = (\text{Setup} \cdot \text{Base} \cdot \text{Alg} \cdot \text{AUF})^{-1}$$
 
 实现文件：
 
@@ -67,6 +66,7 @@ npm start
 ---
 
 ## 五、目录结构（关键）
+```
 xt
 src/
   App.js
@@ -78,6 +78,7 @@ src/
     algTools.js
     caseLibrary.js
     trainingGenerator.js
+```
 ---
 
 ## 六、如何新增你的公式库
