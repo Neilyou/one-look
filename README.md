@@ -18,7 +18,7 @@
 
 ## 二、安装与启动
 
-在项目根目录（`eg-onelook`）执行：
+在项目根目录（`onelook`）执行：
 
 ```bash
 npm install

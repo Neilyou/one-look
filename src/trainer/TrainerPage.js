@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import Cube2DView from './Cube2DView';
 import { CASE_LIBRARY, BASE_PRESETS } from './caseLibrary';
-import { getCstimerCasePreview, getPreviewColor } from './cstimerCasePreview';
 import { buildTrainingScramble } from './trainingGenerator';
 
 const METHOD_OPTIONS = {
@@ -15,13 +14,11 @@ const NORMAL_READY_MS = 500;
 const INSPECTION_READY_MS = 100;
 
 function CasePreview({ methodGroup, method, name }) {
-  const preview = getCstimerCasePreview(methodGroup, method, name);
+  const imgSrc = `/case-images/${methodGroup}/${method}/${name}.png`;
 
   return (
-    <div className="case-preview cstimer-ll-preview" aria-hidden="true">
-      {preview.map((code, i) => (
-        <span key={`${code}-${i}`} style={{ background: getPreviewColor(code) }} />
-      ))}
+    <div className="case-preview" aria-hidden="true">
+      <img src={imgSrc} alt={name} />
     </div>
   );
 }
@@ -34,8 +31,6 @@ export default function TrainerPage() {
   const [base, setBase] = useState('');
   const [useCustomBase, setUseCustomBase] = useState(false);
   const [customBase, setCustomBase] = useState('');
-  const [defaultBase, setDefaultBase] = useState('');
-
   const [forceTrailingR, setForceTrailingR] = useState(true);
   const [scramble, setScramble] = useState('');
   const [forwardSeq, setForwardSeq] = useState('');
@@ -210,8 +205,7 @@ export default function TrainerPage() {
     const picked = caseList[caseIdx];
     if (!picked) return;
     const baseToUse = useCustomBase ? customBase.trim() : base;
-    const basePrefix = defaultBase.trim();
-    const setupPrefix = [basePrefix, baseToUse].filter(Boolean).join(' ').trim();
+    const setupPrefix = baseToUse;
     const { scramble: s, forward } = buildTrainingScramble({
       setup: setupPrefix,
       base: '',
@@ -322,17 +316,6 @@ export default function TrainerPage() {
                 <span className="case-picker-title">{selectedCase ? selectedCase.name : '请选择公式'}</span>
                 <span className="case-picker-alg">{selectedCase ? selectedCase.alg : '当前分类暂无公式'}</span>
               </button>
-            </div>
-
-            <div className="row">
-              <label>默认打乱前缀</label>
-              <select value={defaultBase} onChange={(e) => setDefaultBase(e.target.value)}>
-                {BASE_PRESETS.map((b) => (
-                  <option key={b.name} value={b.face}>
-                    {b.name}{b.face ? ` (${b.face})` : ''}
-                  </option>
-                ))}
-              </select>
             </div>
 
             <div className="row">

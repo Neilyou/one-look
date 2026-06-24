@@ -28,10 +28,10 @@ const HelpModal = ({ open, setOpen }) => {
             mb={1}
             sx={(theme) => theme.typography.h0}
           >
-            Two-Tools.com
+            One-Look
           </Typography>
           <Typography id="modal-desc" textColor="text.tertiary">
-            Two-tools helps find practical solutions to any 2x2 scramble.
+            One-Look helps find practical solutions to any 2x2 scramble.
             Enter any 2x2 scramble with WCA notation and submit to see possible solutions.
             Use the settings button to change things such as which methods you want to see.
             Solutions are sorted by <Typography fontWeight="bold">expected speed</Typography>.
