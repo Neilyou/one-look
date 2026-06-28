@@ -43,14 +43,17 @@ body {
 }
 
 .brand-mark {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   display: grid;
   place-items: center;
-  color: var(--tt-blue);
-  border: 3px solid var(--tt-blue);
   border-radius: 8px;
-  font-weight: 900;
+  overflow: hidden;
+}
+.brand-mark img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 h1 {
@@ -479,20 +482,39 @@ li {
   line-height: 1.35;
 }
 
-.case-picker-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(176px, 1fr));
-  gap: 10px;
+.case-picker-group-list {
   padding: 14px;
   overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
-.case-card {
-  min-height: 178px;
+.case-picker-group-sep {
+  border-top: 1px solid #d3e0ee;
+  padding-top: 18px;
+}
+
+.case-picker-group-header {
+  color: var(--tt-blue-dark);
+  font-size: 17px;
+  font-weight: 900;
+  margin-bottom: 10px;
+  padding-left: 4px;
+}
+
+.case-picker-group-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 10px;
+}
+
+.case-picker-group-card {
+  min-height: 174px;
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 8px;
+  gap: 6px;
   margin: 0;
   padding: 10px;
   color: #173f68;
@@ -500,27 +522,41 @@ li {
   border: 1px solid #d5e2ef;
   border-radius: 12px;
   box-shadow: 0 3px 10px rgba(15, 49, 95, .08);
+  cursor: pointer;
   text-align: left;
 }
 
-.case-card:hover {
+.case-picker-group-card:hover {
   background: #f5fbff;
   border-color: #86b9ed;
   transform: translateY(-1px);
 }
 
-.case-card.selected {
+.case-picker-group-card.checked {
   border-color: var(--tt-blue);
   box-shadow: 0 0 0 3px rgba(29, 111, 216, .16), 0 8px 20px rgba(15, 49, 95, .14);
 }
 
-.case-card-name {
+.case-picker-group-card-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.case-picker-group-card-check input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--tt-blue);
+  pointer-events: none;
+}
+
+.case-picker-group-card-label {
   color: var(--tt-blue-dark);
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 900;
 }
 
-.case-card-alg {
+.case-picker-group-card-alg {
   color: #496985;
   font-size: 12px;
   line-height: 1.35;

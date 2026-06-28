@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Cube2DView from './Cube2DView';
 import { CASE_LIBRARY, BASE_PRESETS } from './caseLibrary';
 import { buildTrainingScramble } from './trainingGenerator';
@@ -13,12 +13,13 @@ const INSPECTION_MS = 15000;
 const NORMAL_READY_MS = 500;
 const INSPECTION_READY_MS = 100;
 
-function CasePreview({ methodGroup, method, name }) {
-  const imgSrc = `/case-images/${methodGroup}/${method}/${name}.png`;
+function CasePreview({ methodGroup, method, name, subcase }) {
+  const fileName = `${name}_${subcase}.png`;
+  const imgSrc = `/case-images/${methodGroup}/${method}/${fileName}`;
 
   return (
     <div className="case-preview" aria-hidden="true">
-      <img src={imgSrc} alt={name} />
+      <img src={imgSrc} alt={`${name}-${subcase}`} />
     </div>
   );
 }
@@ -26,7 +27,7 @@ function CasePreview({ methodGroup, method, name }) {
 export default function TrainerPage() {
   const [methodGroup, setMethodGroup] = useState('EG');
   const [method, setMethod] = useState('EG-1');
-  const [caseIdx, setCaseIdx] = useState(0);
+  const [checkedIndices, setCheckedIndices] = useState(new Set());
 
   const [base, setBase] = useState('');
   const [useCustomBase, setUseCustomBase] = useState(false);
@@ -35,7 +36,6 @@ export default function TrainerPage() {
   const [scramble, setScramble] = useState('');
   const [forwardSeq, setForwardSeq] = useState('');
 
-  // timer phase: idle | inspection | ready | running
   const [timerPhase, setTimerPhase] = useState('idle');
   const [enableInspection, setEnableInspection] = useState(true);
   const [inspectionLeftMs, setInspectionLeftMs] = useState(INSPECTION_MS);
@@ -49,29 +49,56 @@ export default function TrainerPage() {
   const [showCasePicker, setShowCasePicker] = useState(false);
   const [spaceDownAt, setSpaceDownAt] = useState(0);
   const [readyMs, setReadyMs] = useState(NORMAL_READY_MS);
-  const [readyColor, setReadyColor] = useState('red'); // red | green
+  const [readyColor, setReadyColor] = useState('red');
   const [runOffsetMs, setRunOffsetMs] = useState(0);
 
   const methods = METHOD_OPTIONS[methodGroup];
-  const caseList = (CASE_LIBRARY[methodGroup] && CASE_LIBRARY[methodGroup][method]) || [];
-  const selectedCase = caseList[caseIdx];
+  const caseList = useMemo(
+    () => (CASE_LIBRARY[methodGroup] && CASE_LIBRARY[methodGroup][method]) || [],
+    [methodGroup, method]
+  );
 
+  // 按 name 分组
+  const caseGroups = useMemo(() => {
+    const map = new Map();
+    caseList.forEach((c, i) => {
+      const key = c.name;
+      if (!map.has(key)) map.set(key, []);
+      map.get(key).push({ ...c, idx: i });
+    });
+    return Array.from(map.entries());
+  }, [caseList]);
+
+  // 训练池：根据勾选生成
+  const trainingPool = useMemo(() => {
+    return caseList.filter((_, i) => checkedIndices.has(i));
+  }, [caseList, checkedIndices]);
+
+  // 修复方法选择
   useEffect(() => {
     if (!methods.includes(method)) setMethod(methods[0]);
   }, [methodGroup]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // 切换方法/方法组时清除勾选
   useEffect(() => {
-    setCaseIdx(0);
+    setCheckedIndices(new Set());
   }, [methodGroup, method]);
 
-  // running timer: 正向累加每 10ms 更新
+  // 新方法加载后，默认全选
+  useEffect(() => {
+    if (caseList.length > 0) {
+      setCheckedIndices(new Set(caseList.map((_, i) => i)));
+    }
+  }, [method]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // running timer
   useEffect(() => {
     if (timerPhase !== 'running') return;
     const h = setInterval(() => setElapsedMs(runOffsetMs + Date.now() - startTs), 10);
     return () => clearInterval(h);
   }, [timerPhase, startTs, runOffsetMs]);
 
-  // inspection timer: 15s 整数倒计时，首次松开不暂停
+  // inspection timer
   useEffect(() => {
     if (timerPhase !== 'inspection' && timerPhase !== 'ready') return;
     if (inspectionStartTs <= 0) return;
@@ -91,6 +118,7 @@ export default function TrainerPage() {
     return () => clearInterval(h);
   }, [timerPhase, inspectionStartTs]);
 
+  // ready color
   useEffect(() => {
     if (timerPhase !== 'ready') return;
 
@@ -105,6 +133,7 @@ export default function TrainerPage() {
     return () => clearInterval(h);
   }, [timerPhase, spaceDownAt, readyMs]);
 
+  // keyboard
   useEffect(() => {
     const isTypingTarget = (target) => {
       const tag = (target?.tagName || '').toLowerCase();
@@ -166,6 +195,10 @@ export default function TrainerPage() {
           { time: t, method, at: new Date().toLocaleTimeString(), scramble },
           ...r,
         ].slice(0, 50));
+        // 训练池 > 1 时，自动重新生成打乱
+        if (trainingPool.length > 1) {
+          setTimeout(() => genRef.current(), 0);
+        }
       }
     };
 
@@ -199,18 +232,18 @@ export default function TrainerPage() {
       window.removeEventListener('keydown', onKeyDown);
       window.removeEventListener('keyup', onKeyUp);
     };
-  }, [timerPhase, enableInspection, startTs, scramble, method, spaceDownAt, readyMs, inspectionLeftMs, runOffsetMs, spaceHeld]);
+  }, [timerPhase, enableInspection, startTs, scramble, method, spaceDownAt, readyMs, inspectionLeftMs, runOffsetMs, spaceHeld]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const gen = () => {
-    const picked = caseList[caseIdx];
-    if (!picked) return;
+  const gen = useCallback(() => {
+    if (trainingPool.length === 0) return;
+    const picked = trainingPool[Math.floor(Math.random() * trainingPool.length)];
     const baseToUse = useCustomBase ? customBase.trim() : base;
     const setupPrefix = baseToUse;
     const { scramble: s, forward } = buildTrainingScramble({
       setup: setupPrefix,
       base: '',
       alg: picked.alg,
-      addRandomAuf: true,
+      addRandomAuf: false,
       forceTrailingR,
     });
     setScramble(s);
@@ -223,7 +256,11 @@ export default function TrainerPage() {
     setInspectionLeftMs(INSPECTION_MS);
     setSpaceHeld(false);
     setReadyColor('red');
-  };
+  }, [trainingPool, useCustomBase, customBase, base, forceTrailingR]);
+
+  // 用 ref 持有 gen，供键盘事件回调使用
+  const genRef = useRef(gen);
+  genRef.current = gen;
 
   const fmt = (ms) => (ms / 1000).toFixed(2);
   const pb = useMemo(
@@ -244,10 +281,12 @@ export default function TrainerPage() {
     .filter(Boolean)
     .join(' ');
 
+  const checkedCount = checkedIndices.size;
+
   return (
     <div className="app trainer-shell">
       <header className="topbar">
-        <div className="brand-mark">1</div>
+        <div className="brand-mark"><img src={`${process.env.PUBLIC_URL}/logo.png`} alt="One-Look" /></div>
         <h1>One-Look Trainer</h1>
         <div className="topbar-actions">
           <button type="button" className="icon-button" onClick={() => setShowCubeModal(true)}>六面</button>
@@ -261,26 +300,47 @@ export default function TrainerPage() {
             <div className="case-picker-header">
               <div>
                 <h2>选择训练公式</h2>
-                <p>{methodGroup} / {method} · 参考 csTimer 的 case 过滤训练方式，选择一个公式后生成对应训练打乱</p>
+                <p>{methodGroup} / {method} · 勾选要练习的公式，支持多选</p>
               </div>
               <button type="button" className="modal-close" onClick={() => setShowCasePicker(false)}>×</button>
             </div>
 
-            <div className="case-picker-grid">
-              {caseList.map((c, i) => (
-                <button
-                  type="button"
-                  key={`${c.name}-${i}`}
-                  className={`case-card ${i === caseIdx ? 'selected' : ''}`}
-                  onClick={() => {
-                    setCaseIdx(i);
-                    setShowCasePicker(false);
-                  }}
+            <div className="case-picker-group-list">
+              {caseGroups.map(([groupName, subcases], gi) => (
+                <div
+                  key={groupName}
+                  className={gi > 0 ? 'case-picker-group case-picker-group-sep' : 'case-picker-group'}
                 >
-                  <CasePreview methodGroup={methodGroup} method={method} name={c.name} />
-                  <span className="case-card-name">{c.name}</span>
-                  <span className="case-card-alg">{c.alg}</span>
-                </button>
+                  <div className="case-picker-group-header">{groupName}</div>
+                  <div className="case-picker-group-grid">
+                    {subcases.map((s, si) => {
+                      const displayNum = si + 1;
+                      const isChecked = checkedIndices.has(s.idx);
+                      return (
+                        <button
+                          type="button"
+                          key={s.idx}
+                          className={`case-picker-group-card ${isChecked ? 'checked' : ''}`}
+                          onClick={() => {
+                            setCheckedIndices((prev) => {
+                              const next = new Set(prev);
+                              if (next.has(s.idx)) next.delete(s.idx);
+                              else next.add(s.idx);
+                              return next;
+                            });
+                          }}
+                        >
+                          <CasePreview methodGroup={methodGroup} method={method} name={s.name} subcase={s.subcase} />
+                          <div className="case-picker-group-card-check">
+                            <input type="checkbox" checked={isChecked} readOnly tabIndex={-1} />
+                            <span className="case-picker-group-card-label">#{displayNum}</span>
+                          </div>
+                          <span className="case-picker-group-card-alg">{s.alg}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
               ))}
             </div>
           </div>
@@ -313,8 +373,8 @@ export default function TrainerPage() {
             <div className="row case-picker-row">
               <label>公式 Case</label>
               <button type="button" className="case-picker-trigger" onClick={() => setShowCasePicker(true)}>
-                <span className="case-picker-title">{selectedCase ? selectedCase.name : '请选择公式'}</span>
-                <span className="case-picker-alg">{selectedCase ? selectedCase.alg : '当前分类暂无公式'}</span>
+                <span className="case-picker-title">已选 {checkedCount} / {caseList.length} 个公式</span>
+                <span className="case-picker-alg">{checkedCount > 0 ? '点击选择或取消公式' : '当前分类暂无公式'}</span>
               </button>
             </div>
 
@@ -328,7 +388,6 @@ export default function TrainerPage() {
                 ))}
               </select>
             </div>
-
 
             <div className="row checkbox">
               <label>
@@ -374,7 +433,9 @@ export default function TrainerPage() {
               </label>
             </div>
 
-            <button className="primary-button" onClick={gen}>生成训练打乱</button>
+            <button className="primary-button" onClick={gen} disabled={trainingPool.length === 0}>
+              生成训练打乱
+            </button>
           </section>
 
           <button type="button" className="secondary-button" onClick={() => setShowCubeModal((show) => !show)}>
