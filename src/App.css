@@ -94,7 +94,8 @@ h1 {
   display: grid;
   grid-template-columns: minmax(320px, 24%) minmax(0, 76%);
   gap: 16px;
-  min-height: calc(100vh - 84px);
+  height: calc(100vh - 84px);
+  overflow: hidden;
 }
 
 .left-rail {
