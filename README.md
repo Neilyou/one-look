@@ -1,10 +1,6 @@
-# eg-onelook（二阶训练项目）
+# One-Look Trainer（二阶训练项目）
 
-本项目当前包含三部分，请注意区分：
-
-1. `src/util/*`：two-tool 的核心求解/状态逻辑（参考与复用）
-2. `cstimer/*`：cstimer 源码镜像（仅参考，不参与当前 React 训练页编译）
-3. `src/trainer/*`：本项目新增的独立训练系统（当前主要运行入口）
+基于 React 的二阶魔方 EG/TCLL/LS 训练系统，支持自定义做底、公式筛选与计时练习。
 
 ---
 
@@ -12,107 +8,101 @@
 
 - Node.js >= 18
 - npm >= 9
-- 推荐系统：Windows / macOS / Linux
 
 ---
 
 ## 二、安装与启动
 
-在项目根目录（`onelook`）执行：
-
 ```bash
 npm install
 npm start
 ```
-启动后打开：
-- http://localhost:3000
 
-如果 3000 端口占用，按提示切换端口即可。
+启动后打开 http://localhost:3000。
 
 ---
 
-## 三、当前训练系统功能
+## 三、功能概览
 
-训练入口：`src/App.js -> src/trainer/TrainerPage.js`
+### 训练配置
+- **方法组**：EG / TCLL / LS
+- **子类**：EG-1、EG-2、LEG-1、CLL / TCLL+、TCLL- / LS1~LS9
+- **公式选择**：弹窗多选，支持全局全选/取消、分组全选/取消
+- **做底预设**：33 个预设（含空底），分 7 个类别，支持多选后随机抽取，VisualCube 3D 预览图
 
-### 支持能力
+### 打乱生成
+- 基于 `Scramble = (Setup · Base · Alg · AUF)^-1` 生成训练打乱
+- 支持自定义做底、魔方朝向选择
 
-- 选择方法组：`EG / TCLL / LS`
-- 选择子类（例如 `EG-1`, `TCLL+`, `LS1...LS9`）
-- 选择公式 case（可扩展）
-- 选择做底预设或输入自定义做底
-- 一键生成训练打乱
-- 支持“末尾强制 +R”兜底模式
-- 空格键计时（开始/停止）
-- 成绩记录与 PB
-- 显示打乱后的六面颜色 2D 状态图（U/D/F/B/L/R）
+### 计时
+- 空格键：按住准备 / 松开开跑 / 运行中停止
+- 可选 15s 观察阶段
+- 成绩记录与 PB 显示
 
----
-
-## 四、训练打乱生成原理
-
-核心公式：
-
-
-$$\text{Scramble} = (\text{Setup} \cdot \text{Base} \cdot \text{Alg} \cdot \text{AUF})^{-1}$$
-
-实现文件：
-
-- `src/trainer/algTools.js`
-- `src/trainer/trainingGenerator.js`
-
-其中 AUF 默认随机取 `'' / U / U' / U2`。
+### 可视化
+- 六面 2D 颜色状态图
+- 做底预设 2x2 3D 预览图（VisualCube API 生成）
 
 ---
 
-## 五、目录结构（关键）
+## 四、数据规模
+
+- 公式库：773 条（CLL 42 条，EG-1 42 条，EG-2 42 条，LEG-1 18 条，TCLL+ 43 条，TCLL- 42 条，LS1~LS9 共 544 条）
+- 做底预设：33 个，分为基础、顶层不动块bar、顶层不动块not bar、简单不动块、TCLLbar+平移、棋盘顶层bar、底层/顶层bar 共 7 类
+
+---
+
+## 五、目录结构
+
 ```
-xt
 src/
   App.js
   App.css
-  util/                  # two-tool 求解相关
-  trainer/               # 独立训练系统
-    TrainerPage.js
-    Cube2DView.js
-    algTools.js
-    caseLibrary.js
-    trainingGenerator.js
+  util/                     # two-tool 求解相关
+  trainer/                  # 训练系统
+    TrainerPage.js          # 主训练页面
+    Cube2DView.js           # 六面 2D 颜色图
+    caseLibrary.js          # 公式库 + 做底预设
+    trainingGenerator.js    # 打乱生成器
+scripts/
+  downloadBaseImages.mjs    # 做底图片批量下载
+public/
+  case-images/
+    bases/                  # 做底预设 VisualCube 3D 图片
+    EG/ TCLL/ LS/           # 公式 case 图片
 ```
+
 ---
 
-## 六、如何新增你的公式库
+## 六、新增公式
 
-编辑文件：
+编辑 `src/trainer/caseLibrary.js`：
 
-- `src/trainer/caseLibrary.js`
-
-例如给 `EG-1` 增加一个 case：
-s
+```js
 'EG-1': [
-  { name: 'EG1-basic-1', alg: "R U R' U R U2 R'" },
-  { name: 'EG1-new', alg: "你的公式" }
-]---
+  { name: 'Sune', subcase: 0, alg: "R U R' U R U2 R'" },
+  { name: '新公式', subcase: 1, alg: "你的公式" }
+]
+```
 
-## 七、常见问题
-
-### 1) 报错：`Relative imports outside of src are not supported`
-说明你用了类似 `../util/...` 从 `src` 外部导入。  
-请确保所有 import 都在 `src/` 内，当前推荐入口是：
-
-- `src/App.js` 只导入 `./trainer/TrainerPage`
-
-### 2) 页面空白 / 生成不了打乱
-先检查浏览器控制台和终端报错；再确认 `caseLibrary` 中当前子类有可用公式。
-
-### 3) 想保留 two-tool/cstimer 但不冲突
-可以保留目录，不要在 `src/App.js` 直接引用 `cstimer/*` 内容即可。
+新增做底预设同样编辑该文件中的 `BASE_PRESETS` 数组。
 
 ---
 
-## 八、后续建议
+## 七、生成做底图片
 
-- 用真实 EG/TCLL/LS 大公式库替换示例 case
-- 增加按 subset 精确筛选
-- 加入 `two-tool` 校验（生成后验证命中目标 method）
-- 增加 3D twisty 可视化（当前为 2D 六面图）
+```bash
+node scripts/downloadBaseImages.mjs
+```
+
+图片通过 `algs.cuber.pro/visualcube/visualcube.php` 生成，参数：`pzl=2`, `r=y45x-34`（2x2 3D 透视）。
+
+---
+
+## 八、常见问题
+
+### 页面空白 / 生成不了打乱
+检查浏览器控制台和终端报错，确认 `caseLibrary` 中当前子类有可用公式。
+
+### Relative imports outside of src are not supported
+所有 import 必须在 `src/` 内，入口为 `src/App.js` → `./trainer/TrainerPage`。

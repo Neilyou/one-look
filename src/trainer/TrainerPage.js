@@ -1,7 +1,18 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Cube2DView from './Cube2DView';
 import { CASE_LIBRARY, BASE_PRESETS } from './caseLibrary';
-import { buildTrainingScramble } from './trainingGenerator';
+import { buildTrainingScramble, ORIENTATION_PRESETS } from './trainingGenerator';
+
+// 将做底预设按 category 分组
+function groupBasePresets(presets) {
+  const map = new Map();
+  presets.forEach((p) => {
+    const cat = p.category || '其他';
+    if (!map.has(cat)) map.set(cat, []);
+    map.get(cat).push(p);
+  });
+  return Array.from(map.entries());
+}
 
 const METHOD_OPTIONS = {
   EG: ['EG-1', 'EG-2', 'LEG-1', 'CLL'],
@@ -15,7 +26,7 @@ const INSPECTION_READY_MS = 100;
 
 function CasePreview({ methodGroup, method, name, subcase }) {
   const fileName = `${name}_${subcase}.png`;
-  const imgSrc = `/case-images/${methodGroup}/${method}/${fileName}`;
+  const imgSrc = `${process.env.PUBLIC_URL}/case-images/${methodGroup}/${method}/${fileName}`;
 
   return (
     <div className="case-preview" aria-hidden="true">
@@ -24,15 +35,20 @@ function CasePreview({ methodGroup, method, name, subcase }) {
   );
 }
 
+// 将做底预设名称转为文件名（与下载脚本保持一致）
+function sanitizeFileName(name) {
+  return name.replace(/['\s]/g, '_').replace(/[<>:"/\\|?*]/g, '_');
+}
+
 export default function TrainerPage() {
   const [methodGroup, setMethodGroup] = useState('EG');
   const [method, setMethod] = useState('EG-1');
   const [checkedIndices, setCheckedIndices] = useState(new Set());
 
-  const [base, setBase] = useState('');
+  const [selectedBases, setSelectedBases] = useState(new Set());
   const [useCustomBase, setUseCustomBase] = useState(false);
   const [customBase, setCustomBase] = useState('');
-  const [forceTrailingR, setForceTrailingR] = useState(true);
+  const [orientation, setOrientation] = useState('');
   const [scramble, setScramble] = useState('');
   const [forwardSeq, setForwardSeq] = useState('');
 
@@ -47,6 +63,7 @@ export default function TrainerPage() {
   const [spaceHeld, setSpaceHeld] = useState(false);
   const [showCubeModal, setShowCubeModal] = useState(false);
   const [showCasePicker, setShowCasePicker] = useState(false);
+  const [showBasePicker, setShowBasePicker] = useState(false);
   const [spaceDownAt, setSpaceDownAt] = useState(0);
   const [readyMs, setReadyMs] = useState(NORMAL_READY_MS);
   const [readyColor, setReadyColor] = useState('red');
@@ -57,6 +74,44 @@ export default function TrainerPage() {
     () => (CASE_LIBRARY[methodGroup] && CASE_LIBRARY[methodGroup][method]) || [],
     [methodGroup, method]
   );
+  const baseGroups = useMemo(() => groupBasePresets(BASE_PRESETS), []);
+
+  // 做底全选/取消全选
+  const allBasesChecked = useMemo(() => {
+    const faces = BASE_PRESETS.filter(p => p.face);
+    return faces.length > 0 && faces.every(p => selectedBases.has(p.face));
+  }, [selectedBases]);
+
+  const toggleAllBases = () => {
+    if (allBasesChecked) {
+      setSelectedBases(new Set());
+    } else {
+      setSelectedBases(new Set(BASE_PRESETS.filter(p => p.face).map(p => p.face)));
+    }
+  };
+
+  const toggleBaseGroup = (presets) => {
+    const faces = presets.filter(p => p.face).map(p => p.face);
+    const allGroupChecked = faces.every(f => selectedBases.has(f));
+    setSelectedBases(prev => {
+      const next = new Set(prev);
+      if (allGroupChecked) {
+        faces.forEach(f => next.delete(f));
+      } else {
+        faces.forEach(f => next.add(f));
+      }
+      return next;
+    });
+  };
+
+  const toggleSingleBase = (face) => {
+    setSelectedBases(prev => {
+      const next = new Set(prev);
+      if (next.has(face)) next.delete(face);
+      else next.add(face);
+      return next;
+    });
+  };
 
   // 按 name 分组
   const caseGroups = useMemo(() => {
@@ -237,14 +292,15 @@ export default function TrainerPage() {
   const gen = useCallback(() => {
     if (trainingPool.length === 0) return;
     const picked = trainingPool[Math.floor(Math.random() * trainingPool.length)];
-    const baseToUse = useCustomBase ? customBase.trim() : base;
+    const baseArr = useCustomBase ? [customBase.trim()] : [...selectedBases];
+    const baseToUse = baseArr.length > 0 ? baseArr[Math.floor(Math.random() * baseArr.length)] : '';
     const setupPrefix = baseToUse;
     const { scramble: s, forward } = buildTrainingScramble({
       setup: setupPrefix,
       base: '',
       alg: picked.alg,
       addRandomAuf: false,
-      forceTrailingR,
+      orientation,
     });
     setScramble(s);
     setForwardSeq(forward);
@@ -256,7 +312,7 @@ export default function TrainerPage() {
     setInspectionLeftMs(INSPECTION_MS);
     setSpaceHeld(false);
     setReadyColor('red');
-  }, [trainingPool, useCustomBase, customBase, base, forceTrailingR]);
+  }, [trainingPool, useCustomBase, customBase, selectedBases, orientation]);
 
   // 用 ref 持有 gen，供键盘事件回调使用
   const genRef = useRef(gen);
@@ -282,6 +338,29 @@ export default function TrainerPage() {
     .join(' ');
 
   const checkedCount = checkedIndices.size;
+  const allChecked = caseList.length > 0 && checkedCount === caseList.length;
+
+  const toggleAllCases = () => {
+    if (allChecked) {
+      setCheckedIndices(new Set());
+    } else {
+      setCheckedIndices(new Set(caseList.map((_, i) => i)));
+    }
+  };
+
+  const toggleGroupCases = (subcases) => {
+    const groupIdxSet = new Set(subcases.map((s) => s.idx));
+    const allGroupChecked = subcases.every((s) => checkedIndices.has(s.idx));
+    setCheckedIndices((prev) => {
+      const next = new Set(prev);
+      if (allGroupChecked) {
+        groupIdxSet.forEach((i) => next.delete(i));
+      } else {
+        groupIdxSet.forEach((i) => next.add(i));
+      }
+      return next;
+    });
+  };
 
   return (
     <div className="app trainer-shell">
@@ -302,7 +381,16 @@ export default function TrainerPage() {
                 <h2>选择训练公式</h2>
                 <p>{methodGroup} / {method} · 勾选要练习的公式，支持多选</p>
               </div>
-              <button type="button" className="modal-close" onClick={() => setShowCasePicker(false)}>×</button>
+              <div className="case-picker-header-actions">
+                <button
+                  type="button"
+                  className="case-picker-toggle-all"
+                  onClick={toggleAllCases}
+                >
+                  {allChecked ? '取消全选' : '全选'}
+                </button>
+                <button type="button" className="modal-close" onClick={() => setShowCasePicker(false)}>×</button>
+              </div>
             </div>
 
             <div className="case-picker-group-list">
@@ -311,7 +399,16 @@ export default function TrainerPage() {
                   key={groupName}
                   className={gi > 0 ? 'case-picker-group case-picker-group-sep' : 'case-picker-group'}
                 >
-                  <div className="case-picker-group-header">{groupName}</div>
+                  <div className="case-picker-group-header">
+                    <span>{groupName}</span>
+                    <button
+                      type="button"
+                      className="case-picker-group-toggle"
+                      onClick={() => toggleGroupCases(subcases)}
+                    >
+                      {subcases.every((s) => checkedIndices.has(s.idx)) ? '取消' : '全选'}
+                    </button>
+                  </div>
                   <div className="case-picker-group-grid">
                     {subcases.map((s, si) => {
                       const displayNum = si + 1;
@@ -336,6 +433,68 @@ export default function TrainerPage() {
                             <span className="case-picker-group-card-label">#{displayNum}</span>
                           </div>
                           <span className="case-picker-group-card-alg">{s.alg}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showBasePicker && (
+        <div className="case-picker-backdrop" role="dialog" aria-modal="true" aria-label="选择做底预设">
+          <div className="case-picker-modal">
+            <div className="case-picker-header">
+              <div>
+                <h2>选择做底预设</h2>
+                <p>勾选要使用的做底，训练时将随机选择一个</p>
+              </div>
+              <div className="case-picker-header-actions">
+                <button
+                  type="button"
+                  className="case-picker-toggle-all"
+                  onClick={toggleAllBases}
+                >
+                  {allBasesChecked ? '取消全选' : '全选'}
+                </button>
+                <button type="button" className="modal-close" onClick={() => setShowBasePicker(false)}>×</button>
+              </div>
+            </div>
+            <div className="case-picker-group-list">
+              {baseGroups.map(([category, presets], gi) => (
+                <div key={category} className={gi > 0 ? 'base-category-group case-picker-group-sep' : 'base-category-group'}>
+                  <div className="base-picker-group-header">
+                    <span>{category}</span>
+                    <button
+                      type="button"
+                      className="case-picker-group-toggle base-picker-group-toggle"
+                      onClick={() => toggleBaseGroup(presets)}
+                    >
+                      {presets.filter(p => p.face).every(p => selectedBases.has(p.face)) ? '取消' : '全选'}
+                    </button>
+                  </div>
+                  <div className="base-picker-grid">
+                    {presets.map((b) => {
+                      const isSelected = selectedBases.has(b.face);
+                      const fileName = sanitizeFileName(b.name) + '.png';
+                      const imgSrc = `${process.env.PUBLIC_URL}/case-images/bases/${fileName}`;
+                      return (
+                        <button
+                          key={b.name}
+                          type="button"
+                          className={`base-preset-card ${isSelected ? 'selected' : ''}`}
+                          onClick={() => toggleSingleBase(b.face)}
+                        >
+                          <div className="base-preview">
+                            <img src={imgSrc} alt={b.name} />
+                          </div>
+                          <div className="base-preset-card-check">
+                            <input type="checkbox" checked={isSelected} readOnly tabIndex={-1} />
+                            <span className="base-preset-name">{b.face || '空'}</span>
+                          </div>
                         </button>
                       );
                     })}
@@ -378,15 +537,18 @@ export default function TrainerPage() {
               </button>
             </div>
 
-            <div className="row">
+            <div className="row case-picker-row">
               <label>做底预设</label>
-              <select value={base} onChange={(e) => setBase(e.target.value)}>
-                {BASE_PRESETS.map((b) => (
-                  <option key={b.name} value={b.face}>
-                    {b.name}{b.face ? ` (${b.face})` : ''}
-                  </option>
-                ))}
-              </select>
+              <button type="button" className="case-picker-trigger" onClick={() => setShowBasePicker(true)}>
+                <span className="case-picker-title">
+                  {useCustomBase
+                    ? `自定义做底: ${customBase.trim() || '（空）'}`
+                    : selectedBases.size > 0
+                      ? `已选 ${selectedBases.size} 个做底`
+                      : '无（白底）'}
+                </span>
+                <span className="case-picker-alg">点击选择预设做底</span>
+              </button>
             </div>
 
             <div className="row checkbox">
@@ -411,15 +573,16 @@ export default function TrainerPage() {
               </div>
             )}
 
-            <div className="row checkbox">
-              <label>
-                <input
-                  type="checkbox"
-                  checked={forceTrailingR}
-                  onChange={(e) => setForceTrailingR(e.target.checked)}
-                />
-                末尾强制 + R（兜底）
-              </label>
+            <div className="row">
+              <label>魔方朝向</label>
+              <select value={orientation} onChange={(e) => {
+                setOrientation(e.target.value);
+                if (scramble) setTimeout(() => genRef.current(), 0);
+              }}>
+                {ORIENTATION_PRESETS.map((o) => (
+                  <option key={o.rotation} value={o.rotation}>{o.name}</option>
+                ))}
+              </select>
             </div>
 
             <div className="row checkbox">
@@ -433,7 +596,7 @@ export default function TrainerPage() {
               </label>
             </div>
 
-            <button className="primary-button" onClick={gen} disabled={trainingPool.length === 0}>
+            <button className="primary-button" onClick={(e) => { e.target.blur(); gen(); }} disabled={trainingPool.length === 0}>
               生成训练打乱
             </button>
           </section>
@@ -466,7 +629,7 @@ export default function TrainerPage() {
           <div className="panel timer">
             {showCubeModal && timerPhase === 'idle' && (
               <div className="cube-panel timer-cube-overlay" role="region" aria-label="六面颜色状态">
-                <Cube2DView scramble={scramble} />
+                <Cube2DView scramble={orientation ? `${orientation} ${scramble}`.trim() : scramble} />
               </div>
             )}
             <div className={timerClassName}>
