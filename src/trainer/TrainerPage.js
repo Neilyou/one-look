@@ -316,6 +316,11 @@ export default function TrainerPage() {
     setReadyColor('red');
   }, [trainingPool, useCustomBase, customBase, selectedBases, orientation]);
 
+  // 参数变化时自动生成打乱
+  useEffect(() => {
+    gen();
+  }, [gen]);
+
   // 用 ref 持有 gen，供键盘事件回调使用
   const genRef = useRef(gen);
   genRef.current = gen;
@@ -579,10 +584,7 @@ export default function TrainerPage() {
 
             <div className="row">
               <label>魔方朝向</label>
-              <select value={orientation} onChange={(e) => {
-                setOrientation(e.target.value);
-                if (scramble) setTimeout(() => genRef.current(), 0);
-              }}>
+              <select value={orientation} onChange={(e) => setOrientation(e.target.value)}>
                 {ORIENTATION_PRESETS.map((o) => (
                   <option key={o.rotation} value={o.rotation}>{o.name}</option>
                 ))}
@@ -599,10 +601,6 @@ export default function TrainerPage() {
                 启用 15s 观察
               </label>
             </div>
-
-            <button className="primary-button" onClick={(e) => { e.target.blur(); gen(); }} disabled={trainingPool.length === 0}>
-              生成训练打乱
-            </button>
           </section>
 
           <button type="button" className="secondary-button" onClick={(e) => { e.target.blur(); setShowCubeModal((show) => !show); }}>
