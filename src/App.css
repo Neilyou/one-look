@@ -150,8 +150,9 @@ h2 {
 }
 
 .records-panel {
-  max-height: 155px;
+  flex: 1;
   overflow: auto;
+  min-height: 0;
 }
 
 .row {

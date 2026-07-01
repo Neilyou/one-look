@@ -59,6 +59,7 @@ export default function TrainerPage() {
 
   const [startTs, setStartTs] = useState(0);
   const [elapsedMs, setElapsedMs] = useState(0);
+  const [lastTime, setLastTime] = useState(null);
   const [records, setRecords] = useState([]);
   const [spaceHeld, setSpaceHeld] = useState(false);
   const [showCubeModal, setShowCubeModal] = useState(false);
@@ -199,6 +200,7 @@ export default function TrainerPage() {
       setRunOffsetMs(0);
       setStartTs(Date.now());
       setElapsedMs(0);
+      setLastTime(null);
       setTimerPhase('running');
       setSpaceHeld(false);
       setSpaceDownAt(0);
@@ -230,7 +232,7 @@ export default function TrainerPage() {
           setTimerPhase('inspection');
           return;
         }
-        resetReady(NORMAL_READY_MS);
+        startRunning();
         return;
       }
 
@@ -243,6 +245,7 @@ export default function TrainerPage() {
         const t = runOffsetMs + Date.now() - startTs;
         setTimerPhase('idle');
         setElapsedMs(t);
+        setLastTime(t);
         setRunOffsetMs(0);
         setSpaceHeld(false);
         setReadyColor('red');
@@ -306,7 +309,6 @@ export default function TrainerPage() {
     setForwardSeq(forward);
 
     setTimerPhase('idle');
-    setElapsedMs(0);
     setRunOffsetMs(0);
     setInspectionStartTs(0);
     setInspectionLeftMs(INSPECTION_MS);
@@ -327,7 +329,9 @@ export default function TrainerPage() {
   const timerDisplay =
     timerPhase === 'inspection' || (timerPhase === 'ready' && enableInspection)
       ? String(Math.ceil(inspectionLeftMs / 1000))
-      : fmt(elapsedMs);
+      : timerPhase === 'idle' && lastTime !== null
+        ? fmt(lastTime)
+        : fmt(elapsedMs);
   const timerClassName = [
     'time',
     timerPhase === 'running' ? 'running' : '',
@@ -622,7 +626,7 @@ export default function TrainerPage() {
             <div className="panel scramble-panel">
               <h2>Scramble</h2>
               <div className="scramble">{scramble}</div>
-              <div className="hint">空格键：按住准备 / 松开开跑 / 运行中停止</div>
+              <div className="hint">{enableInspection ? '空格键：按住开始观察 / 松开 / 再按住准备 / 松开开跑 / 运行中按空格停止' : '空格键：按空格开始计时 / 再按空格停止'}</div>
             </div>
           )}
 
