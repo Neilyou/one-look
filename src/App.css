@@ -102,6 +102,7 @@ h1 {
   flex-direction: column;
   gap: 10px;
   min-width: 0;
+  overflow: hidden;
 }
 
 .right-stage {

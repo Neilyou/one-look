@@ -372,7 +372,7 @@ export default function TrainerPage() {
         <div className="brand-mark"><img src={`${process.env.PUBLIC_URL}/logo.png`} alt="One-Look" /></div>
         <h1>One-Look Trainer</h1>
         <div className="topbar-actions">
-          <button type="button" className="icon-button" onClick={() => setShowCubeModal(true)}>六面</button>
+          <button type="button" className="icon-button" onClick={(e) => { e.target.blur(); setShowCubeModal(true); }}>六面</button>
           <span>?</span>
         </div>
       </header>
@@ -605,7 +605,7 @@ export default function TrainerPage() {
             </button>
           </section>
 
-          <button type="button" className="secondary-button" onClick={() => setShowCubeModal((show) => !show)}>
+          <button type="button" className="secondary-button" onClick={(e) => { e.target.blur(); setShowCubeModal((show) => !show); }}>
             {showCubeModal ? '隐藏六面颜色状态' : '查看六面颜色状态'}
           </button>
 
