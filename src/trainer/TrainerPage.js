@@ -594,7 +594,7 @@ export default function TrainerPage() {
                 <input
                   type="checkbox"
                   checked={enableInspection}
-                  onChange={(e) => setEnableInspection(e.target.checked)}
+                  onChange={(e) => { setEnableInspection(e.target.checked); e.target.blur(); }}
                 />
                 启用 15s 观察
               </label>
