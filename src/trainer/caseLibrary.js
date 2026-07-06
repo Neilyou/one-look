@@ -848,4 +848,5 @@ export const BASE_PRESETS = [
   { name: "R2' U R U' R", face: "R2' U R U' R", category: '底层/顶层bar' },
   { name: "R2 U' R' U R'", face: "R2 U' R' U R'", category: '底层/顶层bar' },
   { name: "R U' R U R2'", face: "R U' R U R2'", category: '底层/顶层bar' },
+  { name: "R' U R' U' R2", face: "R' U R' U' R2", category: '底层/顶层bar' },
 ];
