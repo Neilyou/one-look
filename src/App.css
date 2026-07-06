@@ -558,7 +558,7 @@ li {
   justify-content: center;
   margin: 0;
   padding: 0;
-  border-radius: 8px;
+  border-radius: 50%;
   background: #fff;
   color: #174c83;
   border: 1px solid #c4d7eb;
@@ -638,7 +638,7 @@ li {
 .case-picker-header-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5cm;
   flex-shrink: 0;
 }
 

@@ -600,10 +600,6 @@ export default function TrainerPage() {
               </select>
             </div>
 
-            <button className="primary-button" onClick={(e) => { e.target.blur(); gen(); }} disabled={trainingPool.length === 0}>
-              生成训练打乱
-            </button>
-
             <div className="row checkbox">
               <label>
                 <input
@@ -614,6 +610,9 @@ export default function TrainerPage() {
                 启用 15s 观察
               </label>
             </div>
+            <button className="primary-button" onClick={(e) => { e.target.blur(); gen(); }} disabled={trainingPool.length === 0}>
+              生成训练打乱
+            </button>
           </section>
 
           <button type="button" className="secondary-button" onClick={(e) => { e.target.blur(); setShowCubeModal((show) => !show); }}>
