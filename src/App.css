@@ -230,12 +230,38 @@ h2 {
   border: 1px solid #d4e2ef;
   border-radius: 10px;
   overflow: hidden;
+  transform: scale(0.55);
+  transform-origin: center center;
 }
 
 .base-preview img {
   width: 100%;
   height: auto;
   display: block;
+}
+
+.base-preview .cube2d-wrap {
+  margin: 0;
+  gap: 3px;
+}
+
+.base-preview .cube2d-wrap .face-card {
+  padding: 2px;
+}
+
+.base-preview .cube2d-wrap .face-title {
+  font-size: 8px;
+}
+
+.base-preview .cube2d-wrap .face-grid {
+  gap: 1px;
+}
+
+.base-preview .cube2d-wrap .sticker {
+  width: 10px;
+  height: 10px;
+  border-radius: 1px;
+  font-size: 7px;
 }
 
 .base-preset-card-check {
