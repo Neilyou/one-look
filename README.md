@@ -2,6 +2,8 @@
 
 基于 React 的二阶魔方 EG/TCLL/LS 训练系统，支持自定义做底、公式筛选与计时练习。
 
+> **参考资料**：原始项目仓库 [Neilyou/one-look](https://github.com/Neilyou/one-look)
+
 ---
 
 ## 一、环境要求
