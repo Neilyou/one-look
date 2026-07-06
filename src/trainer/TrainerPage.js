@@ -500,7 +500,10 @@ export default function TrainerPage() {
                           onClick={() => toggleSingleBase(b.face)}
                         >
                           <div className="base-preview">
-                            <Cube2DView scramble={b.face} key={b.name} />
+                            <img
+                              src={`https://cube.rider.biz/visualcube.php?fmt=png&size=300&pzl=2&bg=t&alg=${b.face.replace(/'/g, '-').replace(/\s+/g, '+')}`}
+                              alt={b.face}
+                            />
                           </div>
                           <div className="base-preset-card-check">
                             <input type="checkbox" checked={isSelected} readOnly tabIndex={-1} />
