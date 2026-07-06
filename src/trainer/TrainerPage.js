@@ -36,6 +36,11 @@ function CasePreview({ methodGroup, method, name, subcase }) {
   );
 }
 
+// 将做底预设名称转为文件名
+function sanitizeFileName(name) {
+  return name.replace(/['\s]/g, '_').replace(/[<>:"/\\|?*]/g, '_');
+}
+
 export default function TrainerPage() {
   const [methodGroup, setMethodGroup] = useState('EG');
   const [method, setMethod] = useState('EG-1');
@@ -492,6 +497,8 @@ export default function TrainerPage() {
                   <div className="base-picker-grid">
                     {presets.map((b) => {
                       const isSelected = selectedBases.has(b.face);
+                      const fileName = sanitizeFileName(b.name) + '.png';
+                      const imgSrc = `${process.env.PUBLIC_URL}/case-images/bases/${fileName}`;
                       return (
                         <button
                           key={b.name}
@@ -500,10 +507,7 @@ export default function TrainerPage() {
                           onClick={() => toggleSingleBase(b.face)}
                         >
                           <div className="base-preview">
-                            <img
-                              src={`https://cube.rider.biz/visualcube.php?fmt=png&size=300&pzl=2&bg=t&alg=${b.face.replace(/'/g, '-').replace(/\s+/g, '+')}`}
-                              alt={b.face}
-                            />
+                            <img src={imgSrc} alt={b.name} />
                           </div>
                           <div className="base-preset-card-check">
                             <input type="checkbox" checked={isSelected} readOnly tabIndex={-1} />

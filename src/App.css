@@ -226,8 +226,8 @@ h2 {
   align-items: center;
   justify-content: center;
   padding: 4px;
-  background: transparent;
-  border: none;
+  background: #fff;
+  border: 1px solid #d4e2ef;
   border-radius: 10px;
   overflow: hidden;
 }
