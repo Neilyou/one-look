@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import GitHubIcon from '@mui/icons-material/GitHub';
 import Cube2DView from './Cube2DView';
 import { CASE_LIBRARY, BASE_PRESETS } from './caseLibrary';
 import { buildTrainingScramble, ORIENTATION_PRESETS } from './trainingGenerator';
@@ -377,7 +378,16 @@ export default function TrainerPage() {
         <div className="brand-mark"><img src={`${process.env.PUBLIC_URL}/logo.png`} alt="One-Look" /></div>
         <h1>One-Look Trainer</h1>
         <div className="topbar-actions">
-          <button type="button" className="icon-button" onClick={(e) => { e.target.blur(); setShowCubeModal(true); }}>六面</button>
+          <button type="button" className="icon-button" onClick={() => gen()}>生成打乱</button>
+          <a
+            href="https://github.com/Neilyou/one-look"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="icon-button"
+            title="GitHub 开源项目"
+          >
+            <GitHubIcon style={{ fontSize: 24 }} />
+          </a>
           <span>?</span>
         </div>
       </header>
