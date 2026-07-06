@@ -378,7 +378,6 @@ export default function TrainerPage() {
         <div className="brand-mark"><img src={`${process.env.PUBLIC_URL}/logo.png`} alt="One-Look" /></div>
         <h1>One-Look Trainer</h1>
         <div className="topbar-actions">
-          <button type="button" className="icon-button" onClick={() => gen()}>生成打乱</button>
           <a
             href="https://github.com/Neilyou/one-look"
             target="_blank"
@@ -600,6 +599,10 @@ export default function TrainerPage() {
                 ))}
               </select>
             </div>
+
+            <button className="primary-button" onClick={(e) => { e.target.blur(); gen(); }} disabled={trainingPool.length === 0}>
+              生成训练打乱
+            </button>
 
             <div className="row checkbox">
               <label>
