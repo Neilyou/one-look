@@ -1,207 +1,849 @@
-// �?scripts/genCaseLibrary.mjs 自动生成，请勿手动编�?// 基于 constants.js �?METHOD_DATA
-// �?773 条记�?
+// 基于 cubing.pro 和 cubingapp.com 的解法公式数据
+// 仅采用每个 case 的第一个解法公式
+// PBL 作为 EG 公式子集独立存在
 export const CASE_LIBRARY = {
   EG: {
     'CLL': [
-      { name: 'PBL', subcase: 1, alg: "F R U' R' U' R U R' F' R U R' U' R' F R F'" },
-      { name: 'PBL', subcase: 2, alg: "R U R' F' R U R' U' R' F R2 U' R'" },
-      { name: 'PBL', subcase: 3, alg: "U2 R U R' F' R U R' U' R' F R2 U' R'" },
-      { name: 'PBL', subcase: 4, alg: "U' R U R' F' R U R' U' R' F R2 U' R'" },
-      { name: 'PBL', subcase: 5, alg: "U R U R' F' R U R' U' R' F R2 U' R'" },
-      { name: 'Sune', subcase: 0, alg: "R U R' U R U2 R'" },
-      { name: 'Sune', subcase: 1, alg: "U' R' F R2 F' U' R' U' R2 U R'" },
-      { name: 'Sune', subcase: 2, alg: "F R' F' R U2 R U2 R'" },
-      { name: 'Sune', subcase: 3, alg: "R U' R' F R' F' R" },
-      { name: 'Sune', subcase: 4, alg: "U2 R U' R U' R' U R' U' F R' F'" },
-      { name: 'Sune', subcase: 5, alg: "R' F2 R U2 R U' R' F" },
-      { name: 'Anti-Sune', subcase: 0, alg: "R' U' R U' R' U2 R" },
-      { name: 'Anti-Sune', subcase: 1, alg: "R U2 R' F R' F' R U' R U' R'" },
-      { name: 'Anti-Sune', subcase: 2, alg: "U2 F' R U R' U2 R' F2 R" },
-      { name: 'Anti-Sune', subcase: 3, alg: "U2 R' F R F' R U R'" },
-      { name: 'Anti-Sune', subcase: 4, alg: "U2 R U2 R' U2 R' F R F'" },
-      { name: 'Anti-Sune', subcase: 5, alg: "U R U R2 F' R F R U' R2 F R" },
-      { name: 'Pi', subcase: 0, alg: "R U' R2 U R2 U R2 U' R" },
-      { name: 'Pi', subcase: 1, alg: "U' R' U' R' F R F' R U' R' U2 R" },
-      { name: 'Pi', subcase: 2, alg: "U' R U' R U' R' U R' F R2 F'" },
-      { name: 'Pi', subcase: 3, alg: "U2 R' F R F' R U' R' U' R U' R'" },
-      { name: 'Pi', subcase: 4, alg: "R U2 R' U' R U R' U2 R' F R F'" },
-      { name: 'Pi', subcase: 5, alg: "U F R' F' R U2 R U' R' U R U2 R'" },
-      { name: 'U', subcase: 0, alg: "U R' U' R2 U R' U2 R U2 R' U R'" },
-      { name: 'U', subcase: 1, alg: "F R U R' U' F'" },
-      { name: 'U', subcase: 2, alg: "F R' F' R U' R U' R' U2 R U' R'" },
-      { name: 'U', subcase: 3, alg: "U' F R U R' U2 F' R U' R' F" },
-      { name: 'U', subcase: 4, alg: "U R U' R2 F R F' R U R' U' R U R'" },
-      { name: 'U', subcase: 5, alg: "U R' U R' F R F' R U2 R' U R" },
-      { name: 'L', subcase: 0, alg: "U R' U R' U2 R U' R' U R U' R2" },
-      { name: 'L', subcase: 1, alg: "R U2 R2 F R F' R U2 R'" },
-      { name: 'L', subcase: 2, alg: "F R' F' R U R U' R'" },
-      { name: 'L', subcase: 3, alg: "U' R U' R' U R U' R' F R' F' R2 U R'" },
-      { name: 'L', subcase: 4, alg: "F R U' R' U' R U R' F'" },
-      { name: 'L', subcase: 5, alg: "R' U' R U2 R' F R' F' R U' R" },
-      { name: 'T', subcase: 0, alg: "U' R' U R' U2 R U2 R' U R2 U' R'" },
-      { name: 'T', subcase: 1, alg: "U F U' R U2 R' U' F2 R U R'" },
-      { name: 'T', subcase: 2, alg: "U2 R U R' U2 R U R' U R' F R F'" },
-      { name: 'T', subcase: 3, alg: "U R' U R U2 R2 F R F' R" },
-      { name: 'T', subcase: 4, alg: "R U R' U' R' F R F'" },
-      { name: 'T', subcase: 5, alg: "U2 R' F' R U R U' R' F" },
-      { name: 'H', subcase: 0, alg: "R2 U2 R' U2 R2" },
-      { name: 'H', subcase: 1, alg: "U R U' R' F R' F' R2 U' R' F R' F' R" },
-      { name: 'H', subcase: 2, alg: "U' F R2 U' R2 U' R2 U R2 F'" },
-      { name: 'H', subcase: 3, alg: "U F R2 U' R2 U' R2 U R2 F'" },
-      { name: 'H', subcase: 4, alg: "U' R U R' U R U R' F R' F' R" },
-      { name: 'H', subcase: 5, alg: "U R U R' U R U R' F R' F' R" }
+        {
+            name: "Anti-Sune",
+            subcase: 1,
+            alg: "R' U' R U' R' U2 R"
+        },
+        {
+            name: "Anti-Sune",
+            subcase: 2,
+            alg: "R U2 R' F R' F' R U' R U' R'"
+        },
+        {
+            name: "Anti-Sune",
+            subcase: 3,
+            alg: "F' R U R' U2 R' F2 R"
+        },
+        {
+            name: "Anti-Sune",
+            subcase: 4,
+            alg: "R' F R F' R U R'"
+        },
+        {
+            name: "Anti-Sune",
+            subcase: 5,
+            alg: "R U R2 F' R F R U' R2 F R"
+        },
+        {
+            name: "Anti-Sune",
+            subcase: 6,
+            alg: "R U2 R' U2 R' F R F'"
+        },
+        {
+            name: "H",
+            subcase: 1,
+            alg: "R2 U2 R U2 R2"
+        },
+        {
+            name: "H",
+            subcase: 2,
+            alg: "R U' R' F R' F' R"
+        },
+        {
+            name: "H",
+            subcase: 3,
+            alg: "R U R' U R U R' F R' F' R"
+        },
+        {
+            name: "H",
+            subcase: 4,
+            alg: "F R2 U' R2 U' R2 U R2 F'"
+        },
+        {
+            name: "L",
+            subcase: 1,
+            alg: "F R U' R' U' R U R' F'"
+        },
+        {
+            name: "L",
+            subcase: 2,
+            alg: "F R' F' R U R U' R'"
+        },
+        {
+            name: "L",
+            subcase: 3,
+            alg: "R U2 R2 F R F' R U2 R'"
+        },
+        {
+            name: "L",
+            subcase: 4,
+            alg: "R' U R' U2 R U' R' U R U' R2"
+        },
+        {
+            name: "L",
+            subcase: 5,
+            alg: "R U' R' U R U' R' F R' F' R2 U R'"
+        },
+        {
+            name: "L",
+            subcase: 6,
+            alg: "R' U' R U2 R' F R' F' R U' R"
+        },
+        {
+            name: "Pi",
+            subcase: 1,
+            alg: "R U' R2 U R2 U R2 U' R"
+        },
+        {
+            name: "Pi",
+            subcase: 2,
+            alg: "R' U' R' F R F' R U' R' U2 R"
+        },
+        {
+            name: "Pi",
+            subcase: 3,
+            alg: "R' F R F' R U' R' U' R U' R'"
+        },
+        {
+            name: "Pi",
+            subcase: 4,
+            alg: "R U' R U' R' U R' F R2 F'"
+        },
+        {
+            name: "Pi",
+            subcase: 5,
+            alg: "R U2 R' U' R U R' U2 R' F R F'"
+        },
+        {
+            name: "Pi",
+            subcase: 6,
+            alg: "R' F2 R U R' F' R U2 R U' R' F"
+        },
+        {
+            name: "Sune",
+            subcase: 1,
+            alg: "R U R' U R U2 R'"
+        },
+        {
+            name: "Sune",
+            subcase: 2,
+            alg: "R' F R2 F' U' R' U' R2 U R'"
+        },
+        {
+            name: "Sune",
+            subcase: 3,
+            alg: "F R' F' R U2 R U2 R'"
+        },
+        {
+            name: "Sune",
+            subcase: 4,
+            alg: "R U' R' F R' F' R"
+        },
+        {
+            name: "Sune",
+            subcase: 5,
+            alg: "R U' R U' R' U R' U' F R' F'"
+        },
+        {
+            name: "Sune",
+            subcase: 6,
+            alg: "R' F2 R U2 R U' R' F"
+        },
+        {
+            name: "T",
+            subcase: 1,
+            alg: "R U R' U' R' F R F'"
+        },
+        {
+            name: "T",
+            subcase: 2,
+            alg: "R' F' R U R U' R' F"
+        },
+        {
+            name: "T",
+            subcase: 3,
+            alg: "R U F R' F' R U2 R U2 R2"
+        },
+        {
+            name: "T",
+            subcase: 4,
+            alg: "R' U R' U2 R U2 R' U R2 U' R'"
+        },
+        {
+            name: "T",
+            subcase: 5,
+            alg: "R U R' U2 R U R' U R' F R F'"
+        },
+        {
+            name: "T",
+            subcase: 6,
+            alg: "R' U R U2 R2 F R F' R"
+        },
+        {
+            name: "U",
+            subcase: 1,
+            alg: "F R U R' U' F'"
+        },
+        {
+            name: "U",
+            subcase: 2,
+            alg: "R U R2' U' R U2 R' U2' R U' R"
+        },
+        {
+            name: "U",
+            subcase: 3,
+            alg: "F R U R' U2 F' R U' R' F"
+        },
+        {
+            name: "U",
+            subcase: 4,
+            alg: "F R' F' R U' R U' R' U2 R U' R'"
+        },
+        {
+            name: "U",
+            subcase: 5,
+            alg: "R U' R2 F R F' R U R' U' R U R'"
+        },
+        {
+            name: "U",
+            subcase: 6,
+            alg: "R' U R' F R F' R U2 R' U R"
+        }
     ],
     'EG-1': [
-      { name: 'PBL', subcase: 0, alg: "y' R' U R' U' R' F R2 U' R' U' R U R' F' R2" },
-      { name: 'PBL', subcase: 1, alg: "R U' R' U' R' F2 U' R U R" },
-      { name: 'PBL', subcase: 2, alg: "U R2 U' R2 U2 F2 U' R2" },
-      { name: 'PBL', subcase: 3, alg: "U' R2 U' R2 U2 F2 U' R2" },
-      { name: 'PBL', subcase: 4, alg: "R2 U' R2 U2 F2 U' R2" },
-      { name: 'PBL', subcase: 5, alg: "U2 R2 U' R2 U2 F2 U' R2" },
-      { name: 'Sune', subcase: 0, alg: "U2 R U R' U F R U' R2 F' R" },
-      { name: 'Sune', subcase: 1, alg: "R U R' F2 U F R U R'" },
-      { name: 'Sune', subcase: 2, alg: "U2 F R' F' R U R' F' R2 U R'" },
-      { name: 'Sune', subcase: 3, alg: "F' U R U' R' U F R U R'" },
-      { name: 'Sune', subcase: 4, alg: "R U' R' U R U' R' U F R U' R'" },
-      { name: 'Sune', subcase: 5, alg: "R' F R2 U' R' U R U' R' F" },
-      { name: 'Anti-Sune', subcase: 0, alg: "U R' F R2 U R' F' U' R U' R'" },
-      { name: 'Anti-Sune', subcase: 1, alg: "U R U' R' F' U' F2 R U' R'" },
-      { name: 'Anti-Sune', subcase: 2, alg: "F' R U R' U' R U R2 F' R" },
-      { name: 'Anti-Sune', subcase: 3, alg: "R U' R' F' U' R U R' U' F" },
-      { name: 'Anti-Sune', subcase: 4, alg: "U2 R U' R2 F R U' R' F R F'" },
-      { name: 'Anti-Sune', subcase: 5, alg: "U' R U R' F' U' R U R' U' R U R'" },
-      { name: 'Pi', subcase: 0, alg: "U2 F2 R U R' U2 R U R' U' F" },
-      { name: 'Pi', subcase: 1, alg: "U' R U' R2 F R2 U' R'" },
-      { name: 'Pi', subcase: 2, alg: "U' R U' R' U R U' R' F R U' R'" },
-      { name: 'Pi', subcase: 3, alg: "U' F R' F U' F2 R U R" },
-      { name: 'Pi', subcase: 4, alg: "U F U' R U2 R' F' R U R' F'" },
-      { name: 'Pi', subcase: 5, alg: "F R U' R' F R U2 R' U F'" },
-      { name: 'U', subcase: 0, alg: "U' y R' U R' U' R U' R' U' F2 R2" },
-      { name: 'U', subcase: 1, alg: "R U R' U R U R2 F R2 U' R'" },
-      { name: 'U', subcase: 2, alg: "U2 R' F R F' R' F R2 U' R'" },
-      { name: 'U', subcase: 3, alg: "U F' U2 R U2 R' U2 F" },
-      { name: 'U', subcase: 4, alg: "U2 R' F R F' U R U' R' F R U' R'" },
-      { name: 'U', subcase: 5, alg: "U' R' F R U' R' F R U' R U R' F'" },
-      { name: 'L', subcase: 0, alg: "R' F R2 U R' F' R U2 R'" },
-      { name: 'L', subcase: 1, alg: "R' U R2 U' R2 U' F R2 U' R'" },
-      { name: 'L', subcase: 2, alg: "U2 R' F R F' R' F R U R U2 R'" },
-      { name: 'L', subcase: 3, alg: "U R U R' F' R U R' U' F R' F' R" },
-      { name: 'L', subcase: 4, alg: "R U' R' U R U' R2 F' R F" },
-      { name: 'L', subcase: 5, alg: "U R' U2 F R U2 R U' R2 F" },
-      { name: 'T', subcase: 0, alg: "R2 B2 U' R' U' R U' R' U R'" },
-      { name: 'T', subcase: 1, alg: "R' F R2 U' R' U' R' F2 R" },
-      { name: 'T', subcase: 2, alg: "U2 R U R2 F' R F R' F' R" },
-      { name: 'T', subcase: 3, alg: "U' R U' R' U2 F R U2 R' F" },
-      { name: 'T', subcase: 4, alg: "U F R U' R2 F' R U R' F' R" },
-      { name: 'T', subcase: 5, alg: "U F' R' F R2 U R' U' R U R'" },
-      { name: 'H', subcase: 0, alg: "R' F R2 U' R2 U' F U R" },
-      { name: 'H', subcase: 1, alg: "F' U R U' R2 F2 R U' F" },
-      { name: 'H', subcase: 2, alg: "U2 R U R' F' R U R' U' R U R'" },
-      { name: 'H', subcase: 3, alg: "R U R' F' R U R' U' R U R'" },
-      { name: 'H', subcase: 4, alg: "R' F R F' U2 F R U2 R' F" },
-      { name: 'H', subcase: 5, alg: "U2 R' F R F' U2 F R U2 R' F" }
+        {
+            name: "Anti-Sune",
+            subcase: 1,
+            alg: "B U' R2 F2 U' F"
+        },
+        {
+            name: "Anti-Sune",
+            subcase: 2,
+            alg: "R U' R' F' U' F2 R U' R'"
+        },
+        {
+            name: "Anti-Sune",
+            subcase: 3,
+            alg: "F' R U R' U' R U R2 F' R"
+        },
+        {
+            name: "Anti-Sune",
+            subcase: 4,
+            alg: "R U' R' F' U' R U R' U' F"
+        },
+        {
+            name: "Anti-Sune",
+            subcase: 5,
+            alg: "R U R' F' U' R U R' U' R U R'"
+        },
+        {
+            name: "Anti-Sune",
+            subcase: 6,
+            alg: "R U' R2 F R U' R' F R F'"
+        },
+        {
+            name: "H",
+            subcase: 1,
+            alg: "R' F R2 U' R2 U' F U R"
+        },
+        {
+            name: "H",
+            subcase: 2,
+            alg: "F' U R U' R2 F2 R U' F"
+        },
+        {
+            name: "H",
+            subcase: 3,
+            alg: "R' U' R' F2 U F' R F'"
+        },
+        {
+            name: "H",
+            subcase: 4,
+            alg: "R U R' F' R U R' U' R U R'"
+        },
+        {
+            name: "L",
+            subcase: 1,
+            alg: "R U' R' U R U' R2 F' R F"
+        },
+        {
+            name: "L",
+            subcase: 2,
+            alg: "R' F R U' R' F R2 U R' F'"
+        },
+        {
+            name: "L",
+            subcase: 3,
+            alg: "R' U R2 U' R2 U' F R2 U' R'"
+        },
+        {
+            name: "L",
+            subcase: 4,
+            alg: "R' F R2 U R' F' R U2 R'"
+        },
+        {
+            name: "L",
+            subcase: 5,
+            alg: "R U R' F' R U R' U' F R' F' R"
+        },
+        {
+            name: "L",
+            subcase: 6,
+            alg: "R' U2 F R U2 R U' R2 F"
+        },
+        {
+            name: "Pi",
+            subcase: 1,
+            alg: "F2 R U R' U2 R U R' U' F"
+        },
+        {
+            name: "Pi",
+            subcase: 2,
+            alg: "R U' R2 F R2 U' R'"
+        },
+        {
+            name: "Pi",
+            subcase: 3,
+            alg: "F R' F U' F2 R U R"
+        },
+        {
+            name: "Pi",
+            subcase: 4,
+            alg: "R U' R' U R U' R' F R U' R'"
+        },
+        {
+            name: "Pi",
+            subcase: 5,
+            alg: "F U' R U2 R' F' R U R' F'"
+        },
+        {
+            name: "Pi",
+            subcase: 6,
+            alg: "F R U' R' F R U2 R' U F'"
+        },
+        {
+            name: "Sune",
+            subcase: 1,
+            alg: "F' L U2 F2 R U'"
+        },
+        {
+            name: "Sune",
+            subcase: 2,
+            alg: "R U R' F2 U F R U R'"
+        },
+        {
+            name: "Sune",
+            subcase: 3,
+            alg: "F R' F' R U R' F' R2 U R'"
+        },
+        {
+            name: "Sune",
+            subcase: 4,
+            alg: "F' U R U' R' U F R U R'"
+        },
+        {
+            name: "Sune",
+            subcase: 5,
+            alg: "R U' R' U R U' R' U F R U' R'"
+        },
+        {
+            name: "Sune",
+            subcase: 6,
+            alg: "R' F R2 U' R' U R U' R' F"
+        },
+        {
+            name: "T",
+            subcase: 1,
+            alg: "F R U' R2 F' R U R' F' R"
+        },
+        {
+            name: "T",
+            subcase: 2,
+            alg: "F' R' F R2 U R' U' R U R'"
+        },
+        {
+            name: "T",
+            subcase: 3,
+            alg: "R' F R2 U' R' U' R' F2 R"
+        },
+        {
+            name: "T",
+            subcase: 4,
+            alg: "R2 B2 U' R' U' R U' R' U R'"
+        },
+        {
+            name: "T",
+            subcase: 5,
+            alg: "R' F' R2 U R' F' R U R'"
+        },
+        {
+            name: "T",
+            subcase: 6,
+            alg: "R U' R' U2 F R U2 R' F"
+        },
+        {
+            name: "U",
+            subcase: 1,
+            alg: "R U R' U R U R2 F R2 U' R'"
+        },
+        {
+            name: "U",
+            subcase: 2,
+            alg: "R' U R' U' R U' R' U' F2 R2"
+        },
+        {
+            name: "U",
+            subcase: 3,
+            alg: "F' U2 R U2 R' U2 F"
+        },
+        {
+            name: "U",
+            subcase: 4,
+            alg: "R' F R F' R' F R2 U' R'"
+        },
+        {
+            name: "U",
+            subcase: 5,
+            alg: "R' F R F' U R U' R' F R U' R'"
+        },
+        {
+            name: "U",
+            subcase: 6,
+            alg: "R' F R U' R' F R U' R U R' F'"
+        }
     ],
     'EG-2': [
-      { name: 'PBL', subcase: 0, alg: "F R2 U2 R' U R U2 R2 F R F' R' F'" },
-      { name: 'PBL', subcase: 1, alg: "R2 F2 R2" },
-      { name: 'PBL', subcase: 2, alg: "U R' U R' F2 R F' R" },
-      { name: 'PBL', subcase: 3, alg: "U' R' U R' F2 R F' R" },
-      { name: 'PBL', subcase: 4, alg: "R' U R' F2 R F' R" },
-      { name: 'PBL', subcase: 5, alg: "U2 R' U R' F2 R F' R" },
-      { name: 'Sune', subcase: 0, alg: "U' F U' R2 U' R' U2 R U' R2 F'" },
-      { name: 'Sune', subcase: 1, alg: "R U R' U R U2 R B2 R2" },
-      { name: 'Sune', subcase: 2, alg: "R U' R' F R' F' R' F2 R2" },
-      { name: 'Sune', subcase: 3, alg: "U F R2 F' R2 F' R U' R" },
-      { name: 'Sune', subcase: 4, alg: "F' R' U R' U2 F R' U R'" },
-      { name: 'Sune', subcase: 5, alg: "R2 B2 R' U' R' F R' F' R" },
-      { name: 'Anti-Sune', subcase: 0, alg: "U2 R' U R U' R2 F R F' R U R' U' R' F2 R2" },
-      { name: 'Anti-Sune', subcase: 1, alg: "R' U' R U' R' U2 R' F2 R2" },
-      { name: 'Anti-Sune', subcase: 2, alg: "U2 R' F R F' R U R B2 R2" },
-      { name: 'Anti-Sune', subcase: 3, alg: "R' U2 R U' R2 F' R U' F R" },
-      { name: 'Anti-Sune', subcase: 4, alg: "U2 R2 F2 R F R F' R U R'" },
-      { name: 'Anti-Sune', subcase: 5, alg: "R2 B2 R2 F' R U R' U2 R' F2 R" },
-      { name: 'Pi', subcase: 0, alg: "F U' R U2 R U' R' U R' F'" },
-      { name: 'Pi', subcase: 1, alg: "R' U2 R2 U' R' F2 R2 F'" },
-      { name: 'Pi', subcase: 2, alg: "U R' F U' R U R' F2 U2 R" },
-      { name: 'Pi', subcase: 3, alg: "U2 R' F' U R' F R2 U2 R' U R" },
-      { name: 'Pi', subcase: 4, alg: "U R' U' R' F2 R2 U R' F2 R" },
-      { name: 'Pi', subcase: 5, alg: "U R' U2 R U' R2 F2 R F R" },
-      { name: 'U', subcase: 0, alg: "F R U R' U' F R2 B2" },
-      { name: 'U', subcase: 1, alg: "F U' R U2 R U' R' U2 R' U' F'" },
-      { name: 'U', subcase: 2, alg: "U2 R' U R' F' R U' R U R' F2 R" },
-      { name: 'U', subcase: 3, alg: "U' R' U' R U R' F2 R U' R' U R" },
-      { name: 'U', subcase: 4, alg: "U' R U' R' U2 R B R' U2 R U' R'" },
-      { name: 'U', subcase: 5, alg: "U' R' F R U2 R' U' R U2 R' F R" },
-      { name: 'L', subcase: 0, alg: "U2 R' U' R U R' F' R U R' U' R' F' R2" },
-      { name: 'L', subcase: 1, alg: "R' U' F2 R U2 R' U2 F R" },
-      { name: 'L', subcase: 2, alg: "U R2 B2 R' U R U' R' F R' F'" },
-      { name: 'L', subcase: 3, alg: "F R' F' R U R U' R B2 R2" },
-      { name: 'L', subcase: 4, alg: "R' U' R' F' R U' R U' R' F R" },
-      { name: 'L', subcase: 5, alg: "U F' R U R' U' R' F R' F2 R2" },
-      { name: 'T', subcase: 0, alg: "U' R2 B2 R2 F R U R' U' F'" },
-      { name: 'T', subcase: 1, alg: "U R' U R U2 R2 F' R U' R" },
-      { name: 'T', subcase: 2, alg: "U R' U R U2 R2 F R F' R' F2 R2" },
-      { name: 'T', subcase: 3, alg: "U2 R' U2 R' F2 R F2 R" },
-      { name: 'T', subcase: 4, alg: "F R F' R U R' U' R B2 R2" },
-      { name: 'T', subcase: 5, alg: "R U R' U' R' F R F' R2 B2 R2" },
-      { name: 'H', subcase: 0, alg: "U R2 F U2 F2 R2 F' R2" },
-      { name: 'H', subcase: 1, alg: "R2 U2 R' U2 F2 R2" },
-      { name: 'H', subcase: 2, alg: "U2 R U2 B2 R' U R U' B R'" },
-      { name: 'H', subcase: 3, alg: "R U2 B2 R' U R U' B R'" },
-      { name: 'H', subcase: 4, alg: "U' R' U' R U2 R2 F' R U' F R" },
-      { name: 'H', subcase: 5, alg: "U R' U' R U2 R2 F' R U' F R" }
+        {
+            name: "Anti-Sune",
+            subcase: 1,
+            alg: "R' U R U' R2 F R F' R U R' U' R' F2 R2"
+        },
+        {
+            name: "Anti-Sune",
+            subcase: 2,
+            alg: "R' U' R U' R' U2 R' F2 R2"
+        },
+        {
+            name: "Anti-Sune",
+            subcase: 3,
+            alg: "R' F R F' R U R B2 R2"
+        },
+        {
+            name: "Anti-Sune",
+            subcase: 4,
+            alg: "R' U2 R U' R2 F' R U' F R"
+        },
+        {
+            name: "Anti-Sune",
+            subcase: 5,
+            alg: "R2 B2 R2 F' R U R' U2 R' F2 R"
+        },
+        {
+            name: "Anti-Sune",
+            subcase: 6,
+            alg: "R2 F2 R F R F' R U R'"
+        },
+        {
+            name: "H",
+            subcase: 1,
+            alg: "R2 F U2 F2 R2 F' R2"
+        },
+        {
+            name: "H",
+            subcase: 2,
+            alg: "R2 U2 R U2 B2 R2"
+        },
+        {
+            name: "H",
+            subcase: 3,
+            alg: "R' U' R U2 R2 F' R U' F R"
+        },
+        {
+            name: "H",
+            subcase: 4,
+            alg: "R U2 B2 R' U R U' B R'"
+        },
+        {
+            name: "L",
+            subcase: 1,
+            alg: "R' U' R' F' R U' R U' R' F R"
+        },
+        {
+            name: "L",
+            subcase: 2,
+            alg: "R2 B2 R' U R U' R' F R' F'"
+        },
+        {
+            name: "L",
+            subcase: 3,
+            alg: "R' U' F2 R U2 R' U2 F R"
+        },
+        {
+            name: "L",
+            subcase: 4,
+            alg: "R' U' R U R' F' R U R' U' R' F' R2"
+        },
+        {
+            name: "L",
+            subcase: 5,
+            alg: "F R' F' R U R U' R B2 R2"
+        },
+        {
+            name: "L",
+            subcase: 6,
+            alg: "R U R U' R' F R' F' R2 B2 R2"
+        },
+        {
+            name: "Pi",
+            subcase: 1,
+            alg: "F U' R U2 R U' R' U R' F'"
+        },
+        {
+            name: "Pi",
+            subcase: 2,
+            alg: "R' U2 R2 U' R' F2 R2 F'"
+        },
+        {
+            name: "Pi",
+            subcase: 3,
+            alg: "R' F' U R' F R2 U2 R' U R"
+        },
+        {
+            name: "Pi",
+            subcase: 4,
+            alg: "R' F U' R U R' F2 U2 R"
+        },
+        {
+            name: "Pi",
+            subcase: 5,
+            alg: "R' U' R' F2 R2 U R' F2 R"
+        },
+        {
+            name: "Pi",
+            subcase: 6,
+            alg: "R' U2 R U' R2 F2 R F R"
+        },
+        {
+            name: "Sune",
+            subcase: 1,
+            alg: "F U' R2 U' R' U2 R U' R2 F'"
+        },
+        {
+            name: "Sune",
+            subcase: 2,
+            alg: "R U R' U R U2 R B2 R2"
+        },
+        {
+            name: "Sune",
+            subcase: 3,
+            alg: "R U' R' F R' F' R' F2 R2"
+        },
+        {
+            name: "Sune",
+            subcase: 4,
+            alg: "F R2 F' R2 F' R U' R"
+        },
+        {
+            name: "Sune",
+            subcase: 5,
+            alg: "F' R' U R' U2 F R' U R'"
+        },
+        {
+            name: "Sune",
+            subcase: 6,
+            alg: "R2 B2 R' U' R' F R' F' R"
+        },
+        {
+            name: "T",
+            subcase: 1,
+            alg: "F R F' R U R' U' R B2 R2"
+        },
+        {
+            name: "T",
+            subcase: 2,
+            alg: "R U R' U' R' F R F' R2 B2 R2"
+        },
+        {
+            name: "T",
+            subcase: 3,
+            alg: "R' U R' F U' R U R2"
+        },
+        {
+            name: "T",
+            subcase: 4,
+            alg: "R2 F2 R U' F R' F' R U R"
+        },
+        {
+            name: "T",
+            subcase: 5,
+            alg: "R' F2 R U' R' U R' F R U' R"
+        },
+        {
+            name: "T",
+            subcase: 6,
+            alg: "R' F' U R U2 R' F' U R"
+        },
+        {
+            name: "U",
+            subcase: 1,
+            alg: "F U' R U2 R U' R' U2 R' U' F'"
+        },
+        {
+            name: "U",
+            subcase: 2,
+            alg: "F R U R' U' F R2 B2"
+        },
+        {
+            name: "U",
+            subcase: 3,
+            alg: "R' U' R U R' F2 R U' R' U R"
+        },
+        {
+            name: "U",
+            subcase: 4,
+            alg: "R2 F2 R U R U2 R2 F R F' R"
+        },
+        {
+            name: "U",
+            subcase: 5,
+            alg: "R2 B2 R' U R' U' R' F R F'"
+        },
+        {
+            name: "U",
+            subcase: 6,
+            alg: "R2 B2 R2 F R F' R U R' U' R'"
+        }
     ],
     'LEG-1': [
-      { name: 'PBL', subcase: 0, alg: "R' U R' U' R' F R2 U' R' U' R U R' F' R2" },
-      { name: 'PBL', subcase: 1, alg: "R2 U R2 U' R2 U R2 U' R2" },
-      { name: 'PBL', subcase: 2, alg: "F2 U' R2 U2 B2 U' R2" },
-      { name: 'PBL', subcase: 3, alg: "U2 F2 U' R2 U2 B2 U' R2" },
-      { name: 'PBL', subcase: 4, alg: "U' F2 U' R2 U2 B2 U' R2" },
-      { name: 'PBL', subcase: 5, alg: "U F2 U' R2 U2 B2 U' R2" },
-      { name: 'Sune', subcase: 0, alg: "U2 R' F U2 R2 F R'" },
-      { name: 'Sune', subcase: 1, alg: "U' R U R2 F' U F2 R2 F'" },
-      { name: 'Sune', subcase: 2, alg: "U2 F R' F' R2 U2 R U' R2" },
-      { name: 'Sune', subcase: 3, alg: "U R2 U' R2 F' R U2 R' U2 R' F" },
-      { name: 'Sune', subcase: 4, alg: "U2 F2 R F' U R' F U' R2" },
-      { name: 'Sune', subcase: 5, alg: "U' R U2 R U' R2 F R2 F'" },
-      { name: 'Anti-Sune', subcase: 0, alg: "U2 x' R U' R2 U R2 B2 R'" },
-      { name: 'Anti-Sune', subcase: 1, alg: "U R2 U R2 U' R U2 R' U' R U R'" },
-      { name: 'Anti-Sune', subcase: 2, alg: "U' F R2 F' R2 U R' U2 R'" },
-      { name: 'Anti-Sune', subcase: 3, alg: "U' F' R U2 R U2 R' F R2 U R2" },
-      { name: 'Anti-Sune', subcase: 4, alg: "U2 R2 U R' U2 R2 F R F'" },
-      { name: 'Anti-Sune', subcase: 5, alg: "U2 R2 U R2 U2 R' F R F' R U' R'" },
-      { name: 'Pi', subcase: 0, alg: "U' R F R' F' U R U' R2 F R F'" },
-      { name: 'Pi', subcase: 1, alg: "U' R U R' U' R U2 R U' R2" },
-      { name: 'Pi', subcase: 2, alg: "U' R2 U R' F R F' U R'" },
-      { name: 'Pi', subcase: 3, alg: "U2 R F' U R' F2 U R F" },
-      { name: 'Pi', subcase: 4, alg: "U R U' R' F R F' R2 U2 R" },
-      { name: 'Pi', subcase: 5, alg: "U R U R' U R2 U' R2 F R2 F'" },
-      { name: 'U', subcase: 0, alg: "U' R F R' F' R U' R' F' U' F" },
-      { name: 'U', subcase: 1, alg: "R U' R U R' U R U R2" },
-      { name: 'U', subcase: 2, alg: "U' F' U' F R2 U' R' U R U' R'" },
-      { name: 'U', subcase: 3, alg: "R2 U2 R' U' R' F R F' U R'" },
-      { name: 'U', subcase: 4, alg: "U' R2 U R' U2 R' F' U' F" },
-      { name: 'U', subcase: 5, alg: "U R2 U' R U2 R F R F'" },
-      { name: 'L', subcase: 0, alg: "R' F U2 R2 F R U2 R U2 R2" },
-      { name: 'L', subcase: 1, alg: "R' U R' U R2 U' R U2 R'" },
-      { name: 'L', subcase: 2, alg: "U2 R U' R' U' R2 U' R2 F R F'" },
-      { name: 'L', subcase: 3, alg: "F' U F R U2 R U' R2" },
-      { name: 'L', subcase: 4, alg: "U' R U2 F R' F' R U2 R U R2" },
-      { name: 'L', subcase: 5, alg: "U2 R' U2 R' F R2 F' U' R" },
-      { name: 'T', subcase: 0, alg: "U F R F' R' F R2 F' U R' U R" },
-      { name: 'T', subcase: 1, alg: "U2 R U2 R' U2 R U2 R U' R2" },
-      { name: 'T', subcase: 2, alg: "U2 R U R' U' R U R2 F' U F" },
-      { name: 'T', subcase: 3, alg: "U' R' F R2 F' R' U2 F R F'" },
-      { name: 'T', subcase: 4, alg: "U R U R' U' F' R' U2 R U' F" },
-      { name: 'T', subcase: 5, alg: "U R U' F R2 F' U R U' R2" },
-      { name: 'H', subcase: 0, alg: "R F2 R F' R' F U' F" },
-      { name: 'H', subcase: 1, alg: "R2 U' R U' R' U R' U' R U' R2" },
-      { name: 'H', subcase: 2, alg: "U2 R U2 R U' F R F' R" },
-      { name: 'H', subcase: 3, alg: "R U2 R U' F R F' R" },
-      { name: 'H', subcase: 4, alg: "U2 R2 B2 R' U R' F' R U R' U' R U R'" },
-      { name: 'H', subcase: 5, alg: "R2 B2 R' U R' F' R U R' U' R U R'" }
+        {
+            name: "Anti-Sune",
+            subcase: 1,
+            alg: "R U' R2 U R2 B2 R'"
+        },
+        {
+            name: "Anti-Sune",
+            subcase: 2,
+            alg: "R2 U R2 U' R U2 R' U' R U R'"
+        },
+        {
+            name: "Anti-Sune",
+            subcase: 3,
+            alg: "F R2 F' R2 U R' U2 R'"
+        },
+        {
+            name: "Anti-Sune",
+            subcase: 4,
+            alg: "F' R U2 R U2 R' F R2 U R2"
+        },
+        {
+            name: "Anti-Sune",
+            subcase: 5,
+            alg: "F' U2 R U R' U' R' F2 R2 F' R'"
+        },
+        {
+            name: "Anti-Sune",
+            subcase: 6,
+            alg: "R2 U R' U2 R2 F R F'"
+        },
+        {
+            name: "H",
+            subcase: 1,
+            alg: "R U2 R U' R' U F' R"
+        },
+        {
+            name: "H",
+            subcase: 2,
+            alg: "R2 U R' U R U' R U R' U R2"
+        },
+        {
+            name: "H",
+            subcase: 3,
+            alg: "F' R' U' F2 R U' F R'"
+        },
+        {
+            name: "H",
+            subcase: 4,
+            alg: "R U' F R' F' R U' R2"
+        },
+        {
+            name: "L",
+            subcase: 1,
+            alg: "R2 U R' U' F R2 F' U R'"
+        },
+        {
+            name: "L",
+            subcase: 2,
+            alg: "R U' R' U' R2 U' R2 F R F'"
+        },
+        {
+            name: "L",
+            subcase: 3,
+            alg: "R' U R' U R2 U' R U2 R'"
+        },
+        {
+            name: "L",
+            subcase: 4,
+            alg: "R' U R' U' R U R' F R2 F' R"
+        },
+        {
+            name: "L",
+            subcase: 5,
+            alg: "F' U F R U2 R U' R2"
+        },
+        {
+            name: "L",
+            subcase: 6,
+            alg: "R U' R U' R2 U' F R F'"
+        },
+        {
+            name: "Pi",
+            subcase: 1,
+            alg: "F R F' R' F R2 F' R' U2 R"
+        },
+        {
+            name: "Pi",
+            subcase: 2,
+            alg: "R U R' U' R U2 R U' R2"
+        },
+        {
+            name: "Pi",
+            subcase: 3,
+            alg: "R F' U R' F2 U R F"
+        },
+        {
+            name: "Pi",
+            subcase: 4,
+            alg: "R2 U R' F R F' U R'"
+        },
+        {
+            name: "Pi",
+            subcase: 5,
+            alg: "R U' R' F R F' R2 U2 R"
+        },
+        {
+            name: "Pi",
+            subcase: 6,
+            alg: "R U R' U R2 U' R2 F R2 F'"
+        },
+        {
+            name: "Sune",
+            subcase: 1,
+            alg: "R' F R2 F' R2 U2 R"
+        },
+        {
+            name: "Sune",
+            subcase: 2,
+            alg: "R U R2 F' U F2 R2 F'"
+        },
+        {
+            name: "Sune",
+            subcase: 3,
+            alg: "F R' F' R2 U2 R U' R2"
+        },
+        {
+            name: "Sune",
+            subcase: 4,
+            alg: "R2 U' R2 F' R U2 R' U2 R' F"
+        },
+        {
+            name: "Sune",
+            subcase: 5,
+            alg: "F2 R F' U R' F U' R2"
+        },
+        {
+            name: "Sune",
+            subcase: 6,
+            alg: "R U2 R U' R2 F R2 F'"
+        },
+        {
+            name: "T",
+            subcase: 1,
+            alg: "F R' F' R2 U R2 U R U R'"
+        },
+        {
+            name: "T",
+            subcase: 2,
+            alg: "R U' F R2 F' U R U' R2"
+        },
+        {
+            name: "T",
+            subcase: 3,
+            alg: "R U2 R' U R' U' R U2 R U R'"
+        },
+        {
+            name: "T",
+            subcase: 4,
+            alg: "F R F' R' F R2 F' U R' U R"
+        },
+        {
+            name: "T",
+            subcase: 5,
+            alg: "R2 U' R' F R' F' R U' R U' R2"
+        },
+        {
+            name: "T",
+            subcase: 6,
+            alg: "R' F R2 F' R' U2 F R F'"
+        },
+        {
+            name: "U",
+            subcase: 1,
+            alg: "R' U R' U' R U' R' U' R2"
+        },
+        {
+            name: "U",
+            subcase: 2,
+            alg: "R2 U R2 F' R2 F' R2 F R2"
+        },
+        {
+            name: "U",
+            subcase: 3,
+            alg: "R U R' F R2 F' R U' R'"
+        },
+        {
+            name: "U",
+            subcase: 4,
+            alg: "F' U' F R2 U' R' U R U' R'"
+        },
+        {
+            name: "U",
+            subcase: 5,
+            alg: "R2 U R' U2 R' F' U' F"
+        },
+        {
+            name: "U",
+            subcase: 6,
+            alg: "R2 U' R U2 R F R F'"
+        }
+    ],
+    'PBL': [
+        {
+            name: 'PBL',
+            subcase: 0,
+            alg: "R U R' F' R U R' U' R' F R2 U' R'"
+        },
+        {
+            name: 'PBL',
+            subcase: 1,
+            alg: "R U' R' U' F2 U' R U R' U F2"
+        },
+        {
+            name: 'PBL',
+            subcase: 2,
+            alg: "R2 F2 R2"
+        },
+        {
+            name: 'PBL',
+            subcase: 3,
+            alg: "R2 U' B2 U2 R2 U' R2"
+        },
+        {
+            name: 'PBL',
+            subcase: 4,
+            alg: "R U' R F2 R' U R'"
+        },
+        {
+            name: 'PBL',
+            subcase: 5,
+            alg: "R2 U R2 U' R2 U R2 U' R2"
+        }
     ]
-  },
+},
   LS: {
     'LS1': [
       { name: 'PBL', subcase: 0, alg: "F2 R2 U' R' F R' F2 R U' R'" },
@@ -849,4 +1491,4 @@ export const BASE_PRESETS = [
   { name: "R2 U' R' U R'", face: "R2 U' R' U R'", category: '底层/顶层bar' },
   { name: "R U' R U R2'", face: "R U' R U R2'", category: '底层/顶层bar' },
   { name: "R' U R' U' R2", face: "R' U R' U' R2", category: '底层/顶层bar' },
-];
+]

@@ -16,7 +16,7 @@ function groupBasePresets(presets) {
 }
 
 const METHOD_OPTIONS = {
-  EG: ['EG-1', 'EG-2', 'LEG-1', 'CLL'],
+  EG: ['CLL', 'EG-1', 'EG-2', 'LEG-1', 'PBL'],
   TCLL: ['TCLL+', 'TCLL-'],
   LS: ['LS1', 'LS2', 'LS3', 'LS4', 'LS5', 'LS6', 'LS7', 'LS8', 'LS9'],
 };
@@ -25,21 +25,6 @@ const INSPECTION_MS = 15000;
 const NORMAL_READY_MS = 500;
 const INSPECTION_READY_MS = 100;
 
-function CasePreview({ methodGroup, method, name, subcase }) {
-  const fileName = `${name}_${subcase}.png`;
-  const imgSrc = `${process.env.PUBLIC_URL}/case-images/${methodGroup}/${method}/${fileName}`;
-
-  return (
-    <div className="case-preview" aria-hidden="true">
-      <img src={imgSrc} alt={`${name}-${subcase}`} />
-    </div>
-  );
-}
-
-// 将做底预设名称转为文件名
-function sanitizeFileName(name) {
-  return name.replace(/['\s]/g, '_').replace(/[<>:"/\\|?*]/g, '_');
-}
 
 export default function TrainerPage() {
   const [methodGroup, setMethodGroup] = useState('EG');
@@ -375,7 +360,7 @@ export default function TrainerPage() {
   return (
     <div className="app trainer-shell">
       <header className="topbar">
-        <div className="brand-mark"><img src={`${process.env.PUBLIC_URL}/logo.png`} alt="One-Look" /></div>
+        <div className="brand-mark">One-Look</div>
         <h1>One-Look Trainer</h1>
         <div className="topbar-actions">
           <a
@@ -445,7 +430,6 @@ export default function TrainerPage() {
                             });
                           }}
                         >
-                          <CasePreview methodGroup={methodGroup} method={method} name={s.name} subcase={s.subcase} />
                           <div className="case-picker-group-card-check">
                             <input type="checkbox" checked={isChecked} readOnly tabIndex={-1} />
                             <span className="case-picker-group-card-label">#{displayNum}</span>
@@ -497,8 +481,6 @@ export default function TrainerPage() {
                   <div className="base-picker-grid">
                     {presets.map((b) => {
                       const isSelected = selectedBases.has(b.face);
-                      const fileName = sanitizeFileName(b.name) + '.png';
-                      const imgSrc = `${process.env.PUBLIC_URL}/case-images/bases/${fileName}`;
                       return (
                         <button
                           key={b.name}
@@ -506,9 +488,6 @@ export default function TrainerPage() {
                           className={`base-preset-card ${isSelected ? 'selected' : ''}`}
                           onClick={() => toggleSingleBase(b.face)}
                         >
-                          <div className="base-preview">
-                            <img src={imgSrc} alt={b.name} />
-                          </div>
                           <div className="base-preset-card-check">
                             <input type="checkbox" checked={isSelected} readOnly tabIndex={-1} />
                             <span className="base-preset-name">{b.face || '空'}</span>
