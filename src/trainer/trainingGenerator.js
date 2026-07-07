@@ -8,34 +8,34 @@ const AUF_POOL = ['', 'U', "U'", 'U2'];
 export const ORIENTATION_PRESETS = [
   // 白顶
   { name: '白顶绿前', rotation: '' },
-  { name: '白顶红前', rotation: "y'" },
+  { name: '白顶红前', rotation: 'y' },
   { name: '白顶蓝前', rotation: 'y2' },
-  { name: '白顶橙前', rotation: 'y' },
+  { name: '白顶橙前', rotation: "y'" },
   // 黄顶（x2 翻面，蓝变前）
   { name: '黄顶蓝前', rotation: 'x2' },
-  { name: '黄顶红前', rotation: "x2 y'" },
+  { name: '黄顶红前', rotation: 'x2 y' },
   { name: '黄顶绿前', rotation: 'x2 y2' },
-  { name: '黄顶橙前', rotation: 'x2 y' },
+  { name: '黄顶橙前', rotation: "x2 y'" },
   // 绿顶（x 翻面，黄变前）
   { name: '绿顶黄前', rotation: 'x' },
-  { name: '绿顶红前', rotation: 'x y' },
+  { name: '绿顶红前', rotation: "x y'" },
   { name: '绿顶白前', rotation: 'x y2' },
-  { name: '绿顶橙前', rotation: "x y'" },
+  { name: '绿顶橙前', rotation: 'x y' },
   // 蓝顶（x' 翻面，白变前）
   { name: '蓝顶白前', rotation: "x'" },
-  { name: '蓝顶红前', rotation: "x' y" },
+  { name: '蓝顶红前', rotation: "x' y'" },
   { name: '蓝顶黄前', rotation: "x' y2" },
-  { name: '蓝顶橙前', rotation: "x' y'" },
+  { name: '蓝顶橙前', rotation: "x' y" },
   // 红顶（z' 翻面，绿前不变）
   { name: '红顶绿前', rotation: "z'" },
-  { name: '红顶白前', rotation: "z' y" },
+  { name: '红顶白前', rotation: "z' y'" },
   { name: '红顶蓝前', rotation: "z' y2" },
-  { name: '红顶黄前', rotation: "z' y'" },
+  { name: '红顶黄前', rotation: "z' y" },
   // 橙顶（z 翻面，绿前不变）
   { name: '橙顶绿前', rotation: 'z' },
-  { name: '橙顶白前', rotation: 'z y' },
+  { name: '橙顶白前', rotation: "z y'" },
   { name: '橙顶蓝前', rotation: 'z y2' },
-  { name: '橙顶黄前', rotation: "z y'" },
+  { name: '橙顶黄前', rotation: 'z y' },
 ];
 
 export function randomAuf() {
