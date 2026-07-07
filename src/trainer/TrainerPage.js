@@ -25,6 +25,37 @@ const INSPECTION_MS = 15000;
 const NORMAL_READY_MS = 500;
 const INSPECTION_READY_MS = 100;
 
+// 计算公式的逆（逆序 + 每步取反）
+function invertAlg(alg) {
+  if (!alg) return '';
+  const moves = alg.trim().split(/\s+/);
+  const inverted = [];
+  for (let i = moves.length - 1; i >= 0; i--) {
+    const m = moves[i];
+    if (m.endsWith("'")) {
+      inverted.push(m.slice(0, -1));
+    } else if (m.endsWith('2')) {
+      inverted.push(m);
+    } else {
+      inverted.push(m + "'");
+    }
+  }
+  return inverted.join(' ');
+}
+
+// VisualCube API 图片预览组件（基于公式的逆绘制，显示打乱态）
+function CasePreview({ alg }) {
+  const inv = invertAlg(alg);
+  const imgSrc = inv
+    ? `https://visualcube.api.cubing.net/visualcube.php?fmt=png&size=150&pzl=2&alg=${encodeURIComponent(inv)}`
+    : '';
+  if (!imgSrc) return null;
+  return (
+    <div className="case-preview" aria-hidden="true">
+      <img src={imgSrc} alt={alg} />
+    </div>
+  );
+}
 
 export default function TrainerPage() {
   const [methodGroup, setMethodGroup] = useState('EG');
@@ -360,7 +391,7 @@ export default function TrainerPage() {
   return (
     <div className="app trainer-shell">
       <header className="topbar">
-        <div className="brand-mark">One-Look</div>
+        <div className="brand-mark"><img src={`${process.env.PUBLIC_URL}/logo.png`} alt="One-Look" /></div>
         <h1>One-Look Trainer</h1>
         <div className="topbar-actions">
           <a
@@ -430,6 +461,7 @@ export default function TrainerPage() {
                             });
                           }}
                         >
+                          <CasePreview alg={s.alg} />
                           <div className="case-picker-group-card-check">
                             <input type="checkbox" checked={isChecked} readOnly tabIndex={-1} />
                             <span className="case-picker-group-card-label">#{displayNum}</span>
@@ -481,6 +513,10 @@ export default function TrainerPage() {
                   <div className="base-picker-grid">
                     {presets.map((b) => {
                       const isSelected = selectedBases.has(b.face);
+                      const inv = invertAlg(b.face);
+                      const imgSrc = inv
+                        ? `https://visualcube.api.cubing.net/visualcube.php?fmt=png&size=150&pzl=2&alg=${encodeURIComponent(inv)}`
+                        : '';
                       return (
                         <button
                           key={b.name}
@@ -488,6 +524,9 @@ export default function TrainerPage() {
                           className={`base-preset-card ${isSelected ? 'selected' : ''}`}
                           onClick={() => toggleSingleBase(b.face)}
                         >
+                          <div className="base-preview">
+                            {imgSrc ? <img src={imgSrc} alt={b.name} /> : <span className="base-preset-empty">空</span>}
+                          </div>
                           <div className="base-preset-card-check">
                             <input type="checkbox" checked={isSelected} readOnly tabIndex={-1} />
                             <span className="base-preset-name">{b.face || '空'}</span>
