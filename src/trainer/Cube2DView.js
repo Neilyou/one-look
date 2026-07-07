@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { MOVE_FUNCTIONS } from '../util/stickerMapper';
 
-// 配色参考 csTimer 打乱显示：黄顶 / 白底 / 绿前 / 蓝后 / 橙左 / 红右
+// 白顶 / 黄底 / 绿前 / 蓝后 / 橙左 / 红右
 const COLOR_MAP = {
   w: '#f7f9fc', y: '#ffd84d', g: '#27ae60',
   b: '#2f78d4', o: '#ff8a2a', r: '#e33b35'
@@ -34,8 +34,8 @@ function buildStateFromScramble(scramble = '') {
   });
 
   const state = Array(24);
-  stickers[0].forEach((i) => (state[i] = 'y'));
-  stickers[1].forEach((i) => (state[i] = 'w'));
+  stickers[0].forEach((i) => (state[i] = 'w'));
+  stickers[1].forEach((i) => (state[i] = 'y'));
   stickers[2].forEach((i) => (state[i] = 'g'));
   stickers[3].forEach((i) => (state[i] = 'b'));
   stickers[4].forEach((i) => (state[i] = 'o'));
