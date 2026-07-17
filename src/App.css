@@ -452,16 +452,16 @@ li {
 .cube2d-wrap {
   display: grid;
   grid-template-columns: repeat(4, minmax(70px, auto));
-  gap: 6px;
+  gap: 0;   /*⭐修改面间距*/
   justify-content: center;
   align-items: center;
 }
 
-.face-card {
-  border: 1px solid #d5e2ef;
+.face-card {/*⭐去掉每个面周围乱七八糟的东西*/
+  border: none;/*边框*/
   border-radius: 8px;
-  padding: 6px;
-  background: #fff;
+  padding: 0;/*内边距*/
+  background: transparent;/*白色背景→透明*/
 }
 
 .face-U {
@@ -495,6 +495,7 @@ li {
 }
 
 .face-title {
+  display: none;/*⭐不要标题*/
   font-size: 12px;
   color: var(--tt-blue-dark);
   margin-bottom: 6px;
@@ -506,19 +507,20 @@ li {
   display: grid;
   grid-template-columns: repeat(2, 24px);
   grid-template-rows: repeat(2, 24px);
-  gap: 4px;
+  gap: 0;/*⭐色块间距去掉变成一个面*/
   justify-content: center;
 }
 
 .sticker {
   width: 24px;
   height: 24px;
-  border-radius: 5px;
+  border-radius: 0;/*⭐不要圆角*/
   border: 1px solid rgba(0, 0, 0, .18);
 }
 
 .cube-panel {
-  width: 100%;
+  width: fit-content;/*⭐自适应*/
+  max-width: none;
   margin: 0;
   background: #f4f8fc;
   border: 1px solid #b9cfe4;
@@ -531,7 +533,7 @@ li {
   position: absolute;
   right: 12px;
   bottom: 12px;
-  width: min(504px, 59%);
+  width: fit-content;/*⭐宽度适应，移动端也改了*/
   z-index: 1;
   pointer-events: none;
 }
@@ -794,13 +796,14 @@ li {
 }
 
 .cube-panel .cube2d-wrap {
-  grid-template-columns: repeat(4, minmax(76px, auto));
-  gap: 6px;
+  grid-template-columns: repeat(4, auto);
+  gap: 2px; /*⭐紧凑一点，下面也改了*/
 }
 
 .cube-panel .face-card {
-  padding: 6px;
-  border-radius: 10px;
+  padding: 2px;
+  border-radius: 0;
+   width: fit-content;
 }
 
 .cube-panel .face-title {
@@ -811,13 +814,13 @@ li {
 .cube-panel .face-grid {
   grid-template-columns: repeat(2, 25px);
   grid-template-rows: repeat(2, 25px);
-  gap: 4px;
+  gap: 0;
 }
 
 .cube-panel .sticker {
   width: 25px;
   height: 25px;
-  border-radius: 6px;
+  border-radius: 0;/*⭐变方方*/
 }
 
 @media (max-width: 980px) {
@@ -835,7 +838,7 @@ li {
   }
 
   .timer-cube-overlay {
-    width: min(420px, 59%);
+    width: fit-content;
     right: 10px;
     bottom: 10px;
   }
@@ -851,7 +854,8 @@ li {
   }
 
   .timer-cube-overlay {
-    width: min(336px, 46%);
+    width: fit-content;
+    max-width: none;
   }
 
   .topbar-actions {
