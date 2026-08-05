@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-test('renders learn react link', () => {
+test('renders the One-Look trainer', () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: /One-Look Trainer/i })).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /查看六面颜色状态/i })).toBeInTheDocument();
 });

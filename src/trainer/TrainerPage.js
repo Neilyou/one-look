@@ -2,7 +2,9 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import GitHubIcon from '@mui/icons-material/GitHub';
 import Cube2DView from './Cube2DView';
 import { CASE_LIBRARY, BASE_PRESETS } from './caseLibrary';
+import { getCubingProEgScramble } from './cubingProEgCases';
 import { buildTrainingScramble, ORIENTATION_PRESETS } from './trainingGenerator';
+import { getVisualCubeCaseUrl } from './cstimerCasePreview';
 
 // 将做底预设按 category 分组
 function groupBasePresets(presets) {
@@ -26,12 +28,27 @@ const NORMAL_READY_MS = 500;
 const INSPECTION_READY_MS = 100;
 
 // 本地图片预览组件
-function CasePreview({ methodGroup, method, name, subcase }) {
+function CasePreview({ methodGroup, method, name, subcase, alg }) {
   const fileName = `${name}_${subcase}.png`;
-  const imgSrc = `${process.env.PUBLIC_URL}/case-images/${methodGroup}/${method}/${fileName}`;
+  const fallbackSrc = `${process.env.PUBLIC_URL}/case-images/${methodGroup}/${method}/${fileName}`;
+  const referenceScramble = getCubingProEgScramble(methodGroup, method, name, subcase);
+  const imgSrc = getVisualCubeCaseUrl(alg, 256, {
+    plan: method !== 'PBL',
+    algorithm: referenceScramble,
+  });
   return (
     <div className="case-preview" aria-hidden="true">
-      <img src={imgSrc} alt={`${name}-${subcase}`} />
+      <img
+        src={imgSrc}
+        alt={`${name}-${subcase}`}
+        loading="lazy"
+        onError={(event) => {
+          if (!event.currentTarget.dataset.fallbackApplied) {
+            event.currentTarget.dataset.fallbackApplied = 'true';
+            event.currentTarget.src = fallbackSrc;
+          }
+        }}
+      />
     </div>
   );
 }
@@ -445,7 +462,13 @@ export default function TrainerPage() {
                             });
                           }}
                         >
-                          <CasePreview methodGroup={methodGroup} method={method} name={s.name} subcase={s.subcase} />
+                          <CasePreview
+                            methodGroup={methodGroup}
+                            method={method}
+                            name={s.name}
+                            subcase={s.subcase}
+                            alg={s.alg}
+                          />
                           <div className="case-picker-group-card-check">
                             <input type="checkbox" checked={isChecked} readOnly tabIndex={-1} />
                             <span className="case-picker-group-card-label">#{displayNum}</span>
