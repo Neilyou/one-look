@@ -5,6 +5,9 @@ import { CASE_LIBRARY, BASE_PRESETS } from './caseLibrary';
 import { getCubingProEgScramble } from './cubingProEgCases';
 import { buildTrainingScramble, ORIENTATION_PRESETS } from './trainingGenerator';
 import { getVisualCubeCaseUrl } from './cstimerCasePreview';
+import ResultsPanel from './ResultsPanel';
+import { readTrainerState, saveTrainerState } from './trainerStorage';
+import { formatSolve, formatTime, solveValue } from './solveStats';
 
 // 将做底预设按 category 分组
 function groupBasePresets(presets) {
@@ -59,28 +62,47 @@ function sanitizeFileName(name) {
 }
 
 export default function TrainerPage() {
-  const [methodGroup, setMethodGroup] = useState('EG');
-  const [method, setMethod] = useState('EG-1');
-  const [checkedIndices, setCheckedIndices] = useState(new Set());
-
-  const [selectedBases, setSelectedBases] = useState(new Set());
-  const [useCustomBase, setUseCustomBase] = useState(false);
-  const [customBase, setCustomBase] = useState('');
-  const [orientation, setOrientation] = useState('');
+  const [initialState] = useState(() => readTrainerState());
+  const [settings, setSettings] = useState(initialState.settings);
+  const { methodGroup, method, useCustomBase, customBase, orientation, enableInspection } = settings;
+  const updateSetting = (key, value) => setSettings(previous => ({ ...previous, [key]: value }));
+  const setMethodGroup = group => setSettings(previous => ({
+    ...previous, methodGroup: group, method: METHOD_OPTIONS[group][0],
+  }));
+  const setMethod = value => updateSetting('method', value);
+  const setUseCustomBase = value => updateSetting('useCustomBase', value);
+  const setCustomBase = value => updateSetting('customBase', value);
+  const setOrientation = value => updateSetting('orientation', value);
+  const setEnableInspection = value => updateSetting('enableInspection', value);
+  const selectedBases = useMemo(() => new Set(settings.selectedBases), [settings.selectedBases]);
+  const setSelectedBases = updater => setSettings(previous => ({
+    ...previous, selectedBases: [...(typeof updater === 'function' ? updater(new Set(previous.selectedBases)) : updater)],
+  }));
+  const selectionKey = `${methodGroup}/${method}`;
+  const checkedIndices = useMemo(() => new Set(settings.caseSelections[selectionKey]
+    ?? CASE_LIBRARY[methodGroup][method].map((_, i) => i)), [settings.caseSelections, selectionKey, methodGroup, method]);
+  const setCheckedIndices = updater => setSettings(previous => {
+    const current = new Set(previous.caseSelections[selectionKey] ?? CASE_LIBRARY[methodGroup][method].map((_, i) => i));
+    return { ...previous, caseSelections: { ...previous.caseSelections,
+      [selectionKey]: [...(typeof updater === 'function' ? updater(current) : updater)] } };
+  });
   const [scramble, setScramble] = useState('');
-  const [forwardSeq, setForwardSeq] = useState('');
 
   const [timerPhase, setTimerPhase] = useState('idle');
-  const [enableInspection, setEnableInspection] = useState(true);
   const [inspectionLeftMs, setInspectionLeftMs] = useState(INSPECTION_MS);
   const [inspectionStartTs, setInspectionStartTs] = useState(0);
 
   const [startTs, setStartTs] = useState(0);
   const [elapsedMs, setElapsedMs] = useState(0);
-  const [lastTime, setLastTime] = useState(null);
-  const [records, setRecords] = useState([]);
+  const [lastRecordId, setLastRecordId] = useState(initialState.records[0]?.id ?? null);
+  const [records, setRecords] = useState(initialState.records);
+  const [storageFailed, setStorageFailed] = useState(false);
+  const [resultsDialogOpen, setResultsDialogOpen] = useState(false);
   const [spaceHeld, setSpaceHeld] = useState(false);
-  const [showCubeModal, setShowCubeModal] = useState(false);
+  const showCubeModal = settings.showCube;
+  const setShowCubeModal = updater => setSettings(previous => ({
+    ...previous, showCube: typeof updater === 'function' ? updater(previous.showCube) : updater,
+  }));
   const [showCasePicker, setShowCasePicker] = useState(false);
   const [showBasePicker, setShowBasePicker] = useState(false);
   const [spaceDownAt, setSpaceDownAt] = useState(0);
@@ -94,6 +116,10 @@ export default function TrainerPage() {
     [methodGroup, method]
   );
   const baseGroups = useMemo(() => groupBasePresets(BASE_PRESETS), []);
+
+  useEffect(() => {
+    setStorageFailed(!saveTrainerState({ settings, records }));
+  }, [settings, records]);
 
   // 做底全选/取消全选
   const allBasesChecked = useMemo(() => {
@@ -148,23 +174,6 @@ export default function TrainerPage() {
     return caseList.filter((_, i) => checkedIndices.has(i));
   }, [caseList, checkedIndices]);
 
-  // 修复方法选择
-  useEffect(() => {
-    if (!methods.includes(method)) setMethod(methods[0]);
-  }, [methodGroup]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // 切换方法/方法组时清除勾选
-  useEffect(() => {
-    setCheckedIndices(new Set());
-  }, [methodGroup, method]);
-
-  // 新方法加载后，默认全选
-  useEffect(() => {
-    if (caseList.length > 0) {
-      setCheckedIndices(new Set(caseList.map((_, i) => i)));
-    }
-  }, [method]); // eslint-disable-line react-hooks/exhaustive-deps
-
   // running timer
   useEffect(() => {
     if (timerPhase !== 'running') return;
@@ -218,7 +227,7 @@ export default function TrainerPage() {
       setRunOffsetMs(0);
       setStartTs(Date.now());
       setElapsedMs(0);
-      setLastTime(null);
+      setLastRecordId(null);
       setTimerPhase('running');
       setSpaceHeld(false);
       setSpaceDownAt(0);
@@ -236,6 +245,7 @@ export default function TrainerPage() {
     };
 
     const onKeyDown = (e) => {
+      if (showCasePicker || showBasePicker || resultsDialogOpen) return;
       if (isTypingTarget(e.target)) return;
       if (e.code !== 'Space' || e.repeat || spaceHeld) return;
 
@@ -263,14 +273,16 @@ export default function TrainerPage() {
         const t = runOffsetMs + Date.now() - startTs;
         setTimerPhase('idle');
         setElapsedMs(t);
-        setLastTime(t);
+        const timestamp = Date.now();
+        const id = `${timestamp}-${Math.random().toString(36).slice(2)}`;
+        setLastRecordId(id);
         setRunOffsetMs(0);
         setSpaceHeld(false);
         setReadyColor('red');
         setRecords((r) => [
-          { time: t, method, at: new Date().toLocaleTimeString(), scramble },
+          { id, time: t, methodGroup, method, timestamp, scramble, penalty: 'OK' },
           ...r,
-        ].slice(0, 50));
+        ]);
         // 训练池 > 1 时，自动重新生成打乱
         if (trainingPool.length > 1) {
           setTimeout(() => genRef.current(), 0);
@@ -279,6 +291,7 @@ export default function TrainerPage() {
     };
 
     const onKeyUp = (e) => {
+      if (showCasePicker || showBasePicker || resultsDialogOpen) return;
       if (isTypingTarget(e.target)) return;
       if (e.code !== 'Space') return;
       e.preventDefault();
@@ -308,15 +321,21 @@ export default function TrainerPage() {
       window.removeEventListener('keydown', onKeyDown);
       window.removeEventListener('keyup', onKeyUp);
     };
-  }, [timerPhase, enableInspection, startTs, scramble, method, spaceDownAt, readyMs, inspectionLeftMs, runOffsetMs, spaceHeld]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [timerPhase, enableInspection, startTs, scramble, methodGroup, method, spaceDownAt, readyMs, inspectionLeftMs, runOffsetMs, spaceHeld, showCasePicker, showBasePicker, resultsDialogOpen]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const gen = useCallback(() => {
-    if (trainingPool.length === 0) return;
+    setTimerPhase('idle');
+    setRunOffsetMs(0);
+    setInspectionStartTs(0);
+    setInspectionLeftMs(INSPECTION_MS);
+    setSpaceHeld(false);
+    setReadyColor('red');
+    if (trainingPool.length === 0) { setScramble(''); return; }
     const picked = trainingPool[Math.floor(Math.random() * trainingPool.length)];
     const baseArr = useCustomBase ? [customBase.trim()] : [...selectedBases];
     const baseToUse = baseArr.length > 0 ? baseArr[Math.floor(Math.random() * baseArr.length)] : '';
     const setupPrefix = baseToUse;
-    const { scramble: s, forward } = buildTrainingScramble({
+    const { scramble: s } = buildTrainingScramble({
       setup: setupPrefix,
       base: '',
       alg: picked.alg,
@@ -324,14 +343,6 @@ export default function TrainerPage() {
       orientation,
     });
     setScramble(s);
-    setForwardSeq(forward);
-
-    setTimerPhase('idle');
-    setRunOffsetMs(0);
-    setInspectionStartTs(0);
-    setInspectionLeftMs(INSPECTION_MS);
-    setSpaceHeld(false);
-    setReadyColor('red');
   }, [trainingPool, useCustomBase, customBase, selectedBases, orientation]);
 
   // 参数变化时自动生成打乱
@@ -343,18 +354,21 @@ export default function TrainerPage() {
   const genRef = useRef(gen);
   genRef.current = gen;
 
-  const fmt = (ms) => (ms / 1000).toFixed(2);
   const pb = useMemo(
-    () => (records.length ? Math.min(...records.map((x) => x.time)) : null),
+    () => {
+      const valid = records.map(solveValue).filter(Number.isFinite);
+      return valid.length ? Math.min(...valid) : null;
+    },
     [records]
   );
+  const lastRecord = records.find(record => record.id === lastRecordId);
 
   const timerDisplay =
     timerPhase === 'inspection' || (timerPhase === 'ready' && enableInspection)
       ? String(Math.ceil(inspectionLeftMs / 1000))
-      : timerPhase === 'idle' && lastTime !== null
-        ? fmt(lastTime)
-        : fmt(elapsedMs);
+      : timerPhase === 'idle' && lastRecord
+        ? formatSolve(lastRecord)
+        : formatTime(elapsedMs);
   const timerClassName = [
     'time',
     timerPhase === 'running' ? 'running' : '',
@@ -407,6 +421,7 @@ export default function TrainerPage() {
           <span>?</span>
         </div>
       </header>
+      {storageFailed && <div className="storage-warning" role="alert">无法保存本地数据，请检查浏览器存储权限或空间，并导出成绩备份。</div>}
 
       {showCasePicker && (
         <div className="case-picker-backdrop" role="dialog" aria-modal="true" aria-label="选择训练公式">
@@ -554,7 +569,7 @@ export default function TrainerPage() {
 
             <div className="row">
               <label>方法组</label>
-              <select value={methodGroup} onChange={(e) => setMethodGroup(e.target.value)}>
+              <select aria-label="方法组" value={methodGroup} onChange={(e) => setMethodGroup(e.target.value)}>
                 {Object.keys(METHOD_OPTIONS).map((g) => (
                   <option key={g} value={g}>{g}</option>
                 ))}
@@ -563,7 +578,7 @@ export default function TrainerPage() {
 
             <div className="row">
               <label>子类</label>
-              <select value={method} onChange={(e) => setMethod(e.target.value)}>
+              <select aria-label="子类" value={method} onChange={(e) => setMethod(e.target.value)}>
                 {methods.map((m) => (
                   <option key={m} value={m}>{m}</option>
                 ))}
@@ -607,6 +622,7 @@ export default function TrainerPage() {
               <div className="row">
                 <label>自定义做底</label>
                 <input
+                  aria-label="自定义做底"
                   value={customBase}
                   onChange={(e) => setCustomBase(e.target.value)}
                   placeholder="例如 R U R'"
@@ -616,7 +632,7 @@ export default function TrainerPage() {
 
             <div className="row">
               <label>魔方朝向</label>
-              <select value={orientation} onChange={(e) => setOrientation(e.target.value)}>
+              <select aria-label="魔方朝向" value={orientation} onChange={(e) => setOrientation(e.target.value)}>
                 {ORIENTATION_PRESETS.map((o) => (
                   <option key={o.rotation} value={o.rotation}>{o.name}</option>
                 ))}
@@ -641,17 +657,6 @@ export default function TrainerPage() {
           <button type="button" className="secondary-button" onClick={(e) => { e.target.blur(); setShowCubeModal((show) => !show); }}>
             {showCubeModal ? '隐藏六面颜色状态' : '查看六面颜色状态'}
           </button>
-
-          <div className="panel records-panel">
-            <h2>最近成绩</h2>
-            <ol>
-              {records.map((r, i) => (
-                <li key={`${r.at}-${i}`}>
-                  {fmt(r.time)}s - {r.method} - {r.at}
-                </li>
-              ))}
-            </ol>
-          </div>
         </aside>
 
         <section className="right-stage">
@@ -673,11 +678,20 @@ export default function TrainerPage() {
               {timerDisplay}
             </div>
             <div className="best">
-              PB: {pb == null ? '--' : `${fmt(pb)}s`}
+              PB: {pb == null ? '--' : `${formatTime(pb)}s`}
               {timerPhase === 'ready' ? ' · 松开空格开始计时' : ''}
             </div>
           </div>
         </section>
+        <ResultsPanel
+          records={records}
+          onPenalty={(id, penalty) => setRecords(previous => previous.map(record => record.id === id ? { ...record, penalty } : record))}
+          onDelete={id => setRecords(previous => previous.filter(record => record.id !== id))}
+          onClear={ids => { const removed = new Set(ids); setRecords(previous => previous.filter(record => !removed.has(record.id))); }}
+          filter={settings.recordFilter}
+          onFilter={value => updateSetting('recordFilter', value)}
+          methodGroup={methodGroup} method={method} onDialogChange={setResultsDialogOpen}
+        />
       </main>
 
     </div>
